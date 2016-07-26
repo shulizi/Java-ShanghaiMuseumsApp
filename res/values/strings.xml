@@ -4,5 +4,14 @@
     <string name="app_name">ShanghaiSandTMuseums</string>
     <string name="hello_world">Hello world!</string>
     <string name="action_settings">Settings</string>
+    <string name="list_item_title">title</string>
+    <string name="list_item_content">content</string>
+    <string name="list_item_time">time</string>
+    <string name="list_item_desc">desc</string>
+    <string name="icon">icon</string>
+    <string name="comprehensive_museum">comprehensive_museum</string>
+    <string name="foundation_museum">foundation_museum</string>
+    <string name="theme_museum">theme_museum</string>
+    <string name="nothing">nothing</string>
 
 </resources>
