@@ -5,8 +5,34 @@
         AppBaseTheme from BOTH res/values/styles.xml and
         res/values-v11/styles.xml on API 14+ devices.
     -->
-    <style name="AppBaseTheme" parent="Theme.AppCompat.Light.DarkActionBar">
-        <!-- API 14 theme customizations can go here. -->
+     <style name="AppBaseTheme" parent="Theme.AppCompat.Light.DarkActionBar">
+        <item name="android:actionBarStyle">@style/CustomActionBarStyle</item>
+        <item name="android:homeAsUpIndicator">@drawable/back</item> <!--返回icon-->  
+    </style>
+
+    <style name="ActionBarTitleStyle" parent="@android:style/Widget.Holo.Light">
+        <!-- Change action bar background color -->
+        <item name="android:textColor">@color/white</item>
+        <item name="android:textSize">20sp</item>
+    </style>
+
+    <style name="CustomActionBarStyle" parent="@android:style/Widget.ActionBar">
+        <!-- Change action bar background color -->
+        <item name="android:background">@color/sky_blue</item>
+        <item name="android:titleTextStyle">@style/ActionBarTitleStyle</item>
+    </style>
+    <style name="style_titlebar_normal" parent="Theme.AppCompat.Light">  
+        <item name="android:homeAsUpIndicator">@drawable/back</item> <!--返回icon-->  
+    </style> 
+	
+    
+     <style name="MainActivityBaseTheme" parent="Theme.AppCompat.Light.DarkActionBar">
+        <item name="android:actionBarStyle">@style/MainActionBarStyle</item>
+        <item name="android:homeAsUpIndicator">@drawable/back</item> <!--返回icon-->  
+    </style>
+    <style name="MainActionBarStyle" parent="@android:style/Widget.ActionBar">
+        <!-- Change action bar background color -->
+        <item name="android:background">@color/deep_grey</item>
     </style>
 
 </resources>

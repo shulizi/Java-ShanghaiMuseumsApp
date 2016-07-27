@@ -8,10 +8,13 @@ import org.json.JSONException;
 import org.json.JSONObject;
 
 import android.annotation.SuppressLint;
+import android.app.ActionBar;
 import android.app.Activity;
 import android.content.Intent;
 import android.os.Bundle;
 import android.os.Handler;
+import android.view.Menu;
+import android.view.MenuItem;
 import android.view.View;
 import android.widget.AdapterView;
 import android.widget.AdapterView.OnItemClickListener;
@@ -21,16 +24,19 @@ import com.lizi.shanghaisandtmuseums.Adapter.MListAdapter;
 import com.lizi.shanghaisandtmuseums.Adapter.NewsModel;
 import com.lizi.shanghaisandtmuseums.utils.HttpUtil;
 
-public class MuseumsListActivity extends Activity implements OnItemClickListener{
+@SuppressLint("NewApi")
+public class MuseumsListActivity extends Activity implements
+		OnItemClickListener {
 	private ListView lvNews;
 	private MListAdapter mListAdapter;
 	private List<NewsModel> newsList;
 
 	public static final String GET_NEWS_URL = "http://121.42.159.177/news_connect/getJSON.php";
-	@SuppressLint("HandlerLeak") private Handler getNewsHandler = new Handler() {
+	@SuppressLint("HandlerLeak")
+	private Handler getNewsHandler = new Handler() {
 		public void handleMessage(android.os.Message msg) {
 			String strJSON = (String) msg.obj;
-//			Log.d("test", strJSON);
+			// Log.d("test", strJSON);
 			try {
 				JSONArray jsonArray = new JSONArray(strJSON);
 				for (int i = 0; i < jsonArray.length(); i++) {
@@ -40,7 +46,7 @@ public class MuseumsListActivity extends Activity implements OnItemClickListener
 					String time = object.getString("time");
 					String content_url = object.getString("content_url");
 					String pic_url = object.getString("pic_url");
-					
+
 					newsList.add(new NewsModel(title, desc, time, content_url,
 							pic_url));
 				}
@@ -56,7 +62,15 @@ public class MuseumsListActivity extends Activity implements OnItemClickListener
 	protected void onCreate(Bundle savedInstanceState) {
 		super.onCreate(savedInstanceState);
 		setContentView(R.layout.activity_list_museums);
-
+		Intent intent =getIntent();
+		String intentInfo=intent.getStringExtra("info");
+		
+		ActionBar actionBar = getActionBar();
+		actionBar.setDisplayHomeAsUpEnabled(true);
+		actionBar.setDisplayShowHomeEnabled(false);
+		actionBar.setTitle(intentInfo);
+		
+		
 		newsList = new ArrayList<NewsModel>();
 
 		lvNews = (ListView) findViewById(R.id.lv_news);
@@ -75,5 +89,34 @@ public class MuseumsListActivity extends Activity implements OnItemClickListener
 		intent.putExtra("content_url", newsModel.getContent_url());
 		intent.setClass(this, NewsBrowseActivity.class);
 		startActivity(intent);
+	}
+
+	@Override
+	public boolean onCreateOptionsMenu(Menu menu) {
+
+		// Inflate the menu; this adds items to the action bar if it is present.
+		getMenuInflater().inflate(R.menu.other_menu, menu);
+		return true;
+	}
+
+	@Override
+	public boolean onOptionsItemSelected(MenuItem item) {
+		switch (item.getItemId()) {
+		case R.id.action_search:
+			startActivity(new Intent(this, SearchListActivity.class));
+			break;
+		case R.id.action_home:
+			startActivity(new Intent(this, CategoryPagerActivity.class));
+			break;
+		case android.R.id.home:
+			finish();
+			break;
+		case R.id.action_location:
+			startActivity(new Intent(this,LocationPagerActivity.class));
+			break;
+		default:
+			break;
+		}
+		return super.onOptionsItemSelected(item);
 	}
 }

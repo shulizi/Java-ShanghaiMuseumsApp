@@ -16,7 +16,7 @@ import com.lizi.shanghaisandtmuseums.utils.HttpUtil;
 public class MListAdapter extends BaseAdapter {
 	private Context context;
 	private List<NewsModel> newsList;
-	private int flagI;
+//	private int flagI;
 
 	public MListAdapter(Context context, List<NewsModel> newsList) {
 		this.context = context;
@@ -57,7 +57,7 @@ public class MListAdapter extends BaseAdapter {
 //		 System.out.println( flagI + "   " );
 		HttpUtil.setPicBitmap(ivPic, pic_url);
 		ivPic.setTag(pic_url);
-		flagI++;
+//		flagI++;
 		return mainView;
 	}
 
