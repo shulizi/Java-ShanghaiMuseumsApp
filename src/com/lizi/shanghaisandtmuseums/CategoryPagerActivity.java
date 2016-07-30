@@ -14,28 +14,37 @@ import android.view.LayoutInflater;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
+import android.view.View.OnClickListener;
+import android.widget.ImageView;
 import android.widget.TextView;
 
-import com.lizi.shanghaisandtmuseums.Adapter.MViewPagerAdapter;
+import com.lizi.shanghaisandtmuseums.adapter.MViewPagerAdapter;
 import com.lizi.shanghaisandtmuseums.utils.ConfigUtil;
 
-@SuppressLint("NewApi") public class CategoryPagerActivity extends Activity {
+@SuppressLint("NewApi")
+public class CategoryPagerActivity extends Activity {
 	private ViewPager mPager;
 	private List<View> listViews;
 	private TextView tvTitle;
 	private String[] strTitles = { ConfigUtil.FOUNDATION_MUSEUM,
 			ConfigUtil.COMPREHENSIVE_MUSEUM, ConfigUtil.THEME_MUSEUM };
+	private ImageView imageLeft;
+	private ImageView imageRight;
 
 	@Override
 	protected void onCreate(Bundle savedInstanceState) {
 		super.onCreate(savedInstanceState);
 		setContentView(R.layout.activity_pager_category);
 		ActionBar actionBar = getActionBar();
-		actionBar.setDisplayShowTitleEnabled(false);
+		actionBar.setDisplayHomeAsUpEnabled(true);
 		actionBar.setDisplayShowHomeEnabled(false);
+		actionBar.setTitle(ConfigUtil.APP_NAME);
 
 		LayoutInflater lInflater = getLayoutInflater();
 		mPager = (ViewPager) findViewById(R.id.vp_main);
+		imageLeft = (ImageView) findViewById(R.id.image_left);
+		imageLeft.getDrawable().setAlpha(100);
+		imageRight = (ImageView) findViewById(R.id.image_right);
 		tvTitle = (TextView) findViewById(R.id.tv_title);
 		tvTitle.setText(strTitles[0]);
 
@@ -46,12 +55,29 @@ import com.lizi.shanghaisandtmuseums.utils.ConfigUtil;
 				null));
 		listViews.add(lInflater.inflate(R.layout.pager_theme_museum, null));
 		mPager.setAdapter(new MViewPagerAdapter(listViews));
-		mPager.setOnPageChangeListener(MOnPagerChangeListener);
+		mPager.setOnPageChangeListener(mOnPagerChangeListener);
 		mPager.setCurrentItem(0);
+		imageLeft.setOnClickListener(new OnClickListener() {
+
+			@Override
+			public void onClick(View arg0) {
+				if (imageLeft.getDrawable().getAlpha() != 100)
+					mPager.setCurrentItem(mPager.getCurrentItem() - 1);
+			}
+		});
+		imageRight.setOnClickListener(new OnClickListener() {
+
+			@Override
+			public void onClick(View arg0) {
+				if (imageRight.getDrawable().getAlpha() != 100)
+					mPager.setCurrentItem(mPager.getCurrentItem() + 1);
+			}
+		});
+
 	}
 
 	public void foundationClick(View view) {
-//		Toast.makeText(this, "foundationClick", Toast.LENGTH_SHORT).show();
+		// Toast.makeText(this, "foundationClick", Toast.LENGTH_SHORT).show();
 		Intent intent = new Intent();
 		intent.putExtra("info", ConfigUtil.FOUNDATION_MUSEUM);
 		intent.setClass(this, MuseumsListActivity.class);
@@ -59,7 +85,8 @@ import com.lizi.shanghaisandtmuseums.utils.ConfigUtil;
 	};
 
 	public void comprehensiveClick(View view) {
-//		Toast.makeText(this, "comprehensiveClick", Toast.LENGTH_SHORT).show();
+		// Toast.makeText(this, "comprehensiveClick",
+		// Toast.LENGTH_SHORT).show();
 		Intent intent = new Intent();
 		intent.setClass(this, MuseumsListActivity.class);
 		intent.putExtra("info", ConfigUtil.COMPREHENSIVE_MUSEUM);
@@ -67,18 +94,35 @@ import com.lizi.shanghaisandtmuseums.utils.ConfigUtil;
 	};
 
 	public void themeClick(View view) {
-//		Toast.makeText(this, "themeClick", Toast.LENGTH_SHORT).show();
+		// Toast.makeText(this, "themeClick", Toast.LENGTH_SHORT).show();
 		Intent intent = new Intent();
 		intent.setClass(this, MuseumsListActivity.class);
 		intent.putExtra("info", ConfigUtil.THEME_MUSEUM);
 		this.startActivity(intent);
 	};
 
-	private OnPageChangeListener MOnPagerChangeListener = new OnPageChangeListener() {
+	private OnPageChangeListener mOnPagerChangeListener = new OnPageChangeListener() {
 
 		@Override
 		public void onPageSelected(int index) {
 			tvTitle.setText(strTitles[index]);
+			switch (index) {
+			case 0:
+				imageLeft.getDrawable().setAlpha(100);
+				// imageRight.getDrawable().setAlpha(255);
+				break;
+			case 1:
+				imageLeft.getDrawable().setAlpha(255);
+				imageRight.getDrawable().setAlpha(255);
+				break;
+			case 2:
+				imageRight.getDrawable().setAlpha(100);
+				// imageLeft.getDrawable().setAlpha(255);
+				break;
+
+			default:
+				break;
+			}
 		}
 
 		@Override
@@ -91,26 +135,30 @@ import com.lizi.shanghaisandtmuseums.utils.ConfigUtil;
 
 		}
 	};
-	
-	 @Override
-	    public boolean onCreateOptionsMenu(Menu menu) {
-	        
-	        // Inflate the menu; this adds items to the action bar if it is present.
-	        getMenuInflater().inflate(R.menu.category_menu, menu);
-	        return true;
-	    }
-	    @Override
-	    public boolean onOptionsItemSelected(MenuItem item) {
-	    	switch (item.getItemId()) {
-			case R.id.action_search:
-				startActivity(new Intent(this,SearchListActivity.class));
-				break;
-			case R.id.action_location:
-				startActivity(new Intent(this,LocationPagerActivity.class));
-				break;
-			default:
-				break;
-			}
-	    	return super.onOptionsItemSelected(item);
-	    }
+
+	@Override
+	public boolean onCreateOptionsMenu(Menu menu) {
+
+		// Inflate the menu; this adds items to the action bar if it is present.
+		getMenuInflater().inflate(R.menu.category_menu, menu);
+		return true;
+	}
+
+	@Override
+	public boolean onOptionsItemSelected(MenuItem item) {
+		switch (item.getItemId()) {
+		case R.id.action_search:
+			startActivity(new Intent(this, SearchListActivity.class));
+			break;
+		case R.id.action_location:
+			startActivity(new Intent(this, LocationPagerActivity.class));
+			break;
+		case android.R.id.home:
+			finish();
+			break;
+		default:
+			break;
+		}
+		return super.onOptionsItemSelected(item);
+	}
 }

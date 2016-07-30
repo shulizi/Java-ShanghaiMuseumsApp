@@ -18,7 +18,7 @@
 
     <style name="CustomActionBarStyle" parent="@android:style/Widget.ActionBar">
         <!-- Change action bar background color -->
-        <item name="android:background">@color/sky_blue</item>
+        <item name="android:background">@color/deep_grey</item>
         <item name="android:titleTextStyle">@style/ActionBarTitleStyle</item>
     </style>
     <style name="style_titlebar_normal" parent="Theme.AppCompat.Light">  
@@ -26,13 +26,5 @@
     </style> 
 	
     
-     <style name="MainActivityBaseTheme" parent="Theme.AppCompat.Light.DarkActionBar">
-        <item name="android:actionBarStyle">@style/MainActionBarStyle</item>
-        <item name="android:homeAsUpIndicator">@drawable/back</item> <!--返回icon-->  
-    </style>
-    <style name="MainActionBarStyle" parent="@android:style/Widget.ActionBar">
-        <!-- Change action bar background color -->
-        <item name="android:background">@color/deep_grey</item>
-    </style>
 
 </resources>

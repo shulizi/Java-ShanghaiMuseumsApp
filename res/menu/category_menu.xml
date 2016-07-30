@@ -9,5 +9,6 @@
         android:icon="@drawable/location"
         android:showAsAction="always|withText"
         android:title="@string/action_delete"/>
+    
 	
 </menu>

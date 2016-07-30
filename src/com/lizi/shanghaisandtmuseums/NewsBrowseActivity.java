@@ -9,6 +9,7 @@ import android.view.Menu;
 import android.view.MenuItem;
 import android.webkit.WebSettings;
 import android.webkit.WebView;
+import android.webkit.WebViewClient;
 
 import com.lizi.shanghaisandtmuseums.utils.ConfigUtil;
 
@@ -25,6 +26,14 @@ import com.lizi.shanghaisandtmuseums.utils.ConfigUtil;
 		
         webView=(WebView) findViewById(R.id.wv_news);
         String url = getIntent().getStringExtra("content_url");
+        webView.setWebViewClient(new WebViewClient(){
+        	@Override
+        	public boolean shouldOverrideUrlLoading(WebView view, String url) {
+        		view.loadUrl(url);
+        		return true;
+        	}
+        	
+        });
         webView.loadUrl(url);
 
         webView.getSettings().setJavaScriptEnabled(true);

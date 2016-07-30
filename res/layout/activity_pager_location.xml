@@ -3,13 +3,13 @@
     android:layout_width="match_parent"
     android:layout_height="match_parent" >
 
-    <android.support.v4.view.ViewPager
-        android:id="@+id/vp_main"
+    <com.lizi.shanghaisandtmuseums.mview.MViewPager
+        android:id="@+id/vp_location"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_alignParentLeft="true"
         android:layout_centerVertical="true" >
-    </android.support.v4.view.ViewPager>
+    </com.lizi.shanghaisandtmuseums.mview.MViewPager>
 
     <RadioGroup
         android:id="@+id/radioGroup1"
@@ -25,7 +25,10 @@
             android:checked="true"
             android:button="@null"
             android:layout_weight="1"
+            android:drawableTop="@drawable/region"
             android:gravity="center_horizontal"
+            android:textColor="@color/white"
+            android:onClick="locationRadioClick"
             android:text="@string/location" />
 
         <RadioButton
@@ -34,6 +37,9 @@
             android:button="@null"
             android:layout_weight="1"
             android:gravity="center_horizontal"
+            android:drawableTop="@drawable/location"
+            android:textColor="@color/white"
+            android:onClick="mapRadioClick"
             android:text="@string/map" />
     </RadioGroup>
 

@@ -14,8 +14,10 @@
 
         <ImageView
             android:id="@+id/iv_pic"
-            android:layout_width="80dp"
-            android:layout_height="80dp"
+            android:layout_width="95dp"
+            android:layout_height="58.71dp"
+            android:scaleType="centerCrop"
+            android:layout_centerVertical="true"
             android:paddingRight="10dp"
             android:contentDescription="@string/icon"
             android:src="@drawable/ic_launcher" >
@@ -37,7 +39,7 @@
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_toRightOf="@+id/iv_pic"
-            android:layout_marginTop="50dp"
+            android:layout_below="@+id/tv_title"
             android:textColor="@color/grey"
             android:ellipsize="end"
             android:singleLine="true"

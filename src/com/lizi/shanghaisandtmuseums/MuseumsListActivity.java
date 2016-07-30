@@ -20,8 +20,8 @@ import android.widget.AdapterView;
 import android.widget.AdapterView.OnItemClickListener;
 import android.widget.ListView;
 
-import com.lizi.shanghaisandtmuseums.Adapter.MListAdapter;
-import com.lizi.shanghaisandtmuseums.Adapter.NewsModel;
+import com.lizi.shanghaisandtmuseums.adapter.MListAdapter;
+import com.lizi.shanghaisandtmuseums.adapter.NewsModel;
 import com.lizi.shanghaisandtmuseums.utils.HttpUtil;
 
 @SuppressLint("NewApi")
@@ -30,7 +30,7 @@ public class MuseumsListActivity extends Activity implements
 	private ListView lvNews;
 	private MListAdapter mListAdapter;
 	private List<NewsModel> newsList;
-
+	private String categoryIntentInfo;
 	public static final String GET_NEWS_URL = "http://121.42.159.177/news_connect/getJSON.php";
 	@SuppressLint("HandlerLeak")
 	private Handler getNewsHandler = new Handler() {
@@ -42,13 +42,14 @@ public class MuseumsListActivity extends Activity implements
 				for (int i = 0; i < jsonArray.length(); i++) {
 					JSONObject object = jsonArray.getJSONObject(i);
 					String title = object.getString("title");
-					String desc = object.getString("desc");
+					String museum = object.getString("museum");
+					String category = object.getString("category");
 					String time = object.getString("time");
 					String content_url = object.getString("content_url");
 					String pic_url = object.getString("pic_url");
-
-					newsList.add(new NewsModel(title, desc, time, content_url,
-							pic_url));
+					if (category.equals(categoryIntentInfo))
+						newsList.add(new NewsModel(title, museum, category,
+								time, content_url, pic_url));
 				}
 				mListAdapter.notifyDataSetChanged();
 			} catch (JSONException e) {
@@ -62,15 +63,14 @@ public class MuseumsListActivity extends Activity implements
 	protected void onCreate(Bundle savedInstanceState) {
 		super.onCreate(savedInstanceState);
 		setContentView(R.layout.activity_list_museums);
-		Intent intent =getIntent();
-		String intentInfo=intent.getStringExtra("info");
-		
+		Intent intent = getIntent();
+		categoryIntentInfo = intent.getStringExtra("info");
+
 		ActionBar actionBar = getActionBar();
 		actionBar.setDisplayHomeAsUpEnabled(true);
 		actionBar.setDisplayShowHomeEnabled(false);
-		actionBar.setTitle(intentInfo);
-		
-		
+		actionBar.setTitle(categoryIntentInfo);
+
 		newsList = new ArrayList<NewsModel>();
 
 		lvNews = (ListView) findViewById(R.id.lv_news);
@@ -112,7 +112,7 @@ public class MuseumsListActivity extends Activity implements
 			finish();
 			break;
 		case R.id.action_location:
-			startActivity(new Intent(this,LocationPagerActivity.class));
+			startActivity(new Intent(this, LocationPagerActivity.class));
 			break;
 		default:
 			break;

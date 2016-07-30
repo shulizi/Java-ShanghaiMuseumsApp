@@ -6,6 +6,6 @@ public class ConfigUtil {
 	public static String THEME_MUSEUM ="主题场馆";
 	public static String SEARCH="搜索";
 	public static String MUSEUM_INTRODUCTION="场馆介绍";
-	
+	public static String APP_NAME="上海科技馆大全";
 	
 }
