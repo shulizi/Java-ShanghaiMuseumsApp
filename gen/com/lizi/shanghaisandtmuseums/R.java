@@ -1028,12 +1028,13 @@ containing a value of this type.
         public static final int ic_launcher=0x7f02005c;
         public static final int left=0x7f02005d;
         public static final int location=0x7f02005e;
-        public static final int notheme_museum=0x7f02005f;
-        public static final int radio_btn_style=0x7f020060;
-        public static final int region=0x7f020061;
-        public static final int right=0x7f020062;
-        public static final int search=0x7f020063;
-        public static final int theme_museum=0x7f020064;
+        public static final int location_item=0x7f02005f;
+        public static final int notheme_museum=0x7f020060;
+        public static final int radio_btn_style=0x7f020061;
+        public static final int region=0x7f020062;
+        public static final int right=0x7f020063;
+        public static final int search=0x7f020064;
+        public static final int theme_museum=0x7f020065;
     }
     public static final class id {
         public static final int action_bar=0x7f08001c;
@@ -1044,16 +1045,16 @@ containing a value of this type.
         public static final int action_bar_subtitle=0x7f080023;
         public static final int action_bar_title=0x7f080022;
         public static final int action_context_bar=0x7f08001d;
-        public static final int action_home=0x7f080051;
-        public static final int action_location=0x7f080050;
+        public static final int action_home=0x7f080053;
+        public static final int action_location=0x7f080052;
         public static final int action_menu_divider=0x7f080016;
         public static final int action_menu_presenter=0x7f080017;
         public static final int action_mode_close_button=0x7f080024;
-        public static final int action_search=0x7f08004f;
+        public static final int action_search=0x7f080051;
         public static final int activity_chooser_view_content=0x7f080025;
         public static final int always=0x7f08000b;
         public static final int beginning=0x7f080011;
-        public static final int bmapView=0x7f08004e;
+        public static final int bmapView=0x7f080050;
         public static final int checkbox=0x7f08002d;
         public static final int collapseActionView=0x7f08000d;
         public static final int default_activity_button=0x7f080028;
@@ -1072,13 +1073,15 @@ containing a value of this type.
         public static final int image=0x7f080027;
         public static final int imageClear=0x7f080049;
         public static final int imageSearch=0x7f080047;
-        public static final int imageView1=0x7f08004d;
+        public static final int imageView1=0x7f08004e;
         public static final int image_left=0x7f080041;
         public static final int image_right=0x7f080042;
-        public static final int iv_pic=0x7f08004a;
+        public static final int iv_pic=0x7f08004b;
         public static final int listMode=0x7f080001;
         public static final int list_item=0x7f080029;
+        public static final int lv_location=0x7f08004f;
         public static final int lv_news=0x7f08003d;
+        public static final int lv_search_result=0x7f08004a;
         public static final int middle=0x7f080012;
         public static final int never=0x7f080009;
         public static final int none=0x7f080010;
@@ -1109,8 +1112,8 @@ containing a value of this type.
         public static final int tabMode=0x7f080002;
         public static final int title=0x7f08002b;
         public static final int top_action_bar=0x7f080020;
-        public static final int tv_desc=0x7f08004b;
-        public static final int tv_time=0x7f08004c;
+        public static final int tv_desc=0x7f08004c;
+        public static final int tv_time=0x7f08004d;
         public static final int tv_title=0x7f080040;
         public static final int up=0x7f080021;
         public static final int useLogo=0x7f080003;
@@ -1174,14 +1177,15 @@ containing a value of this type.
         public static final int activity_pager_location=0x7f03001a;
         public static final int activity_search_result=0x7f03001b;
         public static final int list_item=0x7f03001c;
-        public static final int list_main_item=0x7f03001d;
-        public static final int pager_comprehensive_museum=0x7f03001e;
-        public static final int pager_foundation_museum=0x7f03001f;
-        public static final int pager_location=0x7f030020;
-        public static final int pager_map=0x7f030021;
-        public static final int pager_theme_museum=0x7f030022;
-        public static final int searchable=0x7f030023;
-        public static final int support_simple_spinner_dropdown_item=0x7f030024;
+        public static final int list_location_item=0x7f03001d;
+        public static final int list_main_item=0x7f03001e;
+        public static final int pager_comprehensive_museum=0x7f03001f;
+        public static final int pager_foundation_museum=0x7f030020;
+        public static final int pager_location=0x7f030021;
+        public static final int pager_map=0x7f030022;
+        public static final int pager_theme_museum=0x7f030023;
+        public static final int searchable=0x7f030024;
+        public static final int support_simple_spinner_dropdown_item=0x7f030025;
     }
     public static final class menu {
         public static final int category_menu=0x7f0e0000;

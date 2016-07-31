@@ -1,6 +1,7 @@
 package com.lizi.shanghaisandtmuseums;
 
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
 
 import android.annotation.SuppressLint;
@@ -11,18 +12,19 @@ import android.graphics.Point;
 import android.graphics.drawable.Drawable;
 import android.os.Bundle;
 import android.support.v4.view.ViewPager;
-import android.support.v4.view.ViewPager.OnPageChangeListener;
 import android.view.LayoutInflater;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup;
-import android.widget.LinearLayout;
+import android.widget.ListAdapter;
+import android.widget.ListView;
 import android.widget.RadioButton;
 
 import com.baidu.mapapi.SDKInitializer;
 import com.baidu.mapapi.map.LogoPosition;
 import com.baidu.mapapi.map.MapView;
+import com.lizi.shanghaisandtmuseums.adapter.MLocationListAdapter;
 import com.lizi.shanghaisandtmuseums.adapter.MViewPagerAdapter;
 import com.lizi.shanghaisandtmuseums.utils.ConfigUtil;
 
@@ -60,6 +62,19 @@ import com.lizi.shanghaisandtmuseums.utils.ConfigUtil;
 	        mMapView.setLogoPosition(LogoPosition.logoPostionleftTop);
 	        mMapView.setZoomControlsPosition(new Point(100,100));
 	        mMapView.showZoomControls(false);;
+	        
+	        ListView locationList = (ListView) locationLayout.findViewById(R.id.lv_location);
+	        ArrayList<HashMap<String, Object>> newsList = new ArrayList<HashMap<String,Object>>();
+	        for(int i=0;i<ConfigUtil.SHANGHAI_DISTRICTS.length;i++){
+	        	HashMap<String, Object> map = new HashMap<String, Object>();
+	        	map.put(ConfigUtil.SHANGHAI_DISTRICTS[i], ConfigUtil.COLORS[i%ConfigUtil.COLORS.length]);
+	        	newsList.add(map);
+	        	
+	        }
+	        ListAdapter  listAdapter= new MLocationListAdapter(this, newsList);
+	        locationList.setAdapter(listAdapter);
+	        
+	        
 	        List<View> pagerListViews = new ArrayList<View>();
 			pagerListViews
 					.add(locationLayout);

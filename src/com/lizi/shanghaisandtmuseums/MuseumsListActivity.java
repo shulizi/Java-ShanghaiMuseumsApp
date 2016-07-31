@@ -20,18 +20,18 @@ import android.widget.AdapterView;
 import android.widget.AdapterView.OnItemClickListener;
 import android.widget.ListView;
 
-import com.lizi.shanghaisandtmuseums.adapter.MListAdapter;
-import com.lizi.shanghaisandtmuseums.adapter.NewsModel;
+import com.lizi.shanghaisandtmuseums.adapter.MMuseumListAdapter;
+import com.lizi.shanghaisandtmuseums.adapter.MuseumNewsModel;
+import com.lizi.shanghaisandtmuseums.utils.ConfigUtil;
 import com.lizi.shanghaisandtmuseums.utils.HttpUtil;
 
 @SuppressLint("NewApi")
 public class MuseumsListActivity extends Activity implements
 		OnItemClickListener {
 	private ListView lvNews;
-	private MListAdapter mListAdapter;
-	private List<NewsModel> newsList;
+	private MMuseumListAdapter mListAdapter;
+	private List<MuseumNewsModel> newsList;
 	private String categoryIntentInfo;
-	public static final String GET_NEWS_URL = "http://121.42.159.177/news_connect/getJSON.php";
 	@SuppressLint("HandlerLeak")
 	private Handler getNewsHandler = new Handler() {
 		public void handleMessage(android.os.Message msg) {
@@ -48,7 +48,7 @@ public class MuseumsListActivity extends Activity implements
 					String content_url = object.getString("content_url");
 					String pic_url = object.getString("pic_url");
 					if (category.equals(categoryIntentInfo))
-						newsList.add(new NewsModel(title, museum, category,
+						newsList.add(new MuseumNewsModel(title, museum, category,
 								time, content_url, pic_url));
 				}
 				mListAdapter.notifyDataSetChanged();
@@ -71,20 +71,20 @@ public class MuseumsListActivity extends Activity implements
 		actionBar.setDisplayShowHomeEnabled(false);
 		actionBar.setTitle(categoryIntentInfo);
 
-		newsList = new ArrayList<NewsModel>();
+		newsList = new ArrayList<MuseumNewsModel>();
 
 		lvNews = (ListView) findViewById(R.id.lv_news);
-		mListAdapter = new MListAdapter(this, newsList);
+		mListAdapter = new MMuseumListAdapter(this, newsList);
 		lvNews.setAdapter(mListAdapter);
 		lvNews.setOnItemClickListener(this);
-		HttpUtil.getNewsJSON(GET_NEWS_URL, getNewsHandler);
+		HttpUtil.getNewsJSON(ConfigUtil.GET_NEWS_URL, getNewsHandler);
 
 	}
 
 	@Override
 	public void onItemClick(AdapterView<?> arg0, View arg1, int position,
 			long arg3) {
-		NewsModel newsModel = newsList.get(position);
+		MuseumNewsModel newsModel = newsList.get(position);
 		Intent intent = new Intent();
 		intent.putExtra("content_url", newsModel.getContent_url());
 		intent.setClass(this, NewsBrowseActivity.class);
