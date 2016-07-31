@@ -34,9 +34,5 @@
 ####新增功能
 
 - 地区界面的完成
-![Alt text](./picture/Screenshot_2016-07-31-21-21-47-507_com.lizi.shanghaisandtmuseums.png)
 - 搜索界面的完成
-![Alt text](./picture/Screenshot_2016-07-31-21-21-38-981_com.lizi.shanghaisandtmuseums.png)
 - 列表界面的优化
-![Alt text](./picture/Screenshot_2016-07-31-21-21-18-080_com.lizi.shanghaisandtmuseums.png)
-
