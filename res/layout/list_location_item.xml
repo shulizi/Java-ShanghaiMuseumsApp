@@ -18,7 +18,7 @@
             android:layout_height="50dp"
             android:layout_marginRight="10dp"
             android:layout_centerVertical="true"
-            android:contentDescription="@string/icon"
+            android:contentDescription="@string/icon" 
             android:src="@drawable/location" >
         </com.lizi.shanghaisandtmuseums.mview.MCircleView>
 

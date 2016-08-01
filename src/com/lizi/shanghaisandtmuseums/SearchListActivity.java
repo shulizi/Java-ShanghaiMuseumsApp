@@ -13,6 +13,7 @@ import android.app.Activity;
 import android.content.Intent;
 import android.os.Bundle;
 import android.os.Handler;
+import android.os.Message;
 import android.text.Editable;
 import android.text.TextWatcher;
 import android.view.KeyEvent;
@@ -41,12 +42,16 @@ public class SearchListActivity extends Activity implements OnItemClickListener 
 	private ListView lvNews;
 	private MSearchListAdapter mListAdapter;
 	private List<MuseumNewsModel> newsList;
+	private String strJSON;
+	private String searchKey;
 	@SuppressLint("HandlerLeak")
 	private Handler getNewsHandler = new Handler() {
 		public void handleMessage(android.os.Message msg) {
-			String strJSON = (String) msg.obj;
+			strJSON = (String) msg.obj;
+			
 			// Log.d("test", strJSON);
 			try {
+				newsList.clear();
 				JSONArray jsonArray = new JSONArray(strJSON);
 				for (int i = 0; i < jsonArray.length(); i++) {
 					JSONObject object = jsonArray.getJSONObject(i);
@@ -56,8 +61,14 @@ public class SearchListActivity extends Activity implements OnItemClickListener 
 					String time = object.getString("time");
 					String content_url = object.getString("content_url");
 					String pic_url = object.getString("pic_url");
-					newsList.add(new MuseumNewsModel(title, museum, category,
-							time, content_url, pic_url));
+					
+					String searchText=title+" "+museum+" "+category;
+					if(searchKey==null || (searchKey!=null && searchText.indexOf(searchKey)!=-1)){
+						newsList.add(new MuseumNewsModel(title, museum, category,
+								time, content_url, pic_url));
+					}
+					
+					
 				}
 				mListAdapter.notifyDataSetChanged();
 			} catch (JSONException e) {
@@ -131,12 +142,17 @@ public class SearchListActivity extends Activity implements OnItemClickListener 
 			@Override
 			public void afterTextChanged(Editable arg0) {
 				imageSearch.getDrawable().setAlpha(255);
+				doSearching(editSearch.getText().toString());
 			}
 		});
 	}
 
 	private void doSearching(String query) {
-		Toast.makeText(this, query, Toast.LENGTH_SHORT).show();
+//		Toast.makeText(this, query, Toast.LENGTH_SHORT).show();
+		searchKey=query;
+		Message msg=new Message();
+		msg.obj=strJSON;
+		getNewsHandler.sendMessage(msg);
 	}
 
 	@Override
