@@ -28,7 +28,6 @@ import android.widget.ImageView;
 import android.widget.ListView;
 import android.widget.TextView;
 import android.widget.TextView.OnEditorActionListener;
-import android.widget.Toast;
 
 import com.lizi.shanghaisandtmuseums.adapter.MSearchListAdapter;
 import com.lizi.shanghaisandtmuseums.adapter.MuseumNewsModel;

@@ -19,7 +19,8 @@ import android.os.Message;
 import android.widget.ImageView;
 
 public class HttpUtil {
-	private static Map<String, SoftReference<Bitmap>> caches= new HashMap<String, SoftReference<Bitmap>>(); ;
+	private static Map<String, SoftReference<Bitmap>> caches = new HashMap<String, SoftReference<Bitmap>>();;
+
 	public static void getNewsJSON(final String url, final Handler handler) {
 		new Thread(new Runnable() {
 
@@ -54,21 +55,21 @@ public class HttpUtil {
 	}
 
 	public static void setPicBitmap(final ImageView ivPic, final String pic_url) {
-		
-		//判断是否有缓存
-		if(caches.containsKey(pic_url)){
+
+		// 判断是否有缓存
+		if (caches.containsKey(pic_url)) {
 			SoftReference<Bitmap> rf = caches.get(pic_url);
 			Bitmap bm = rf.get();
-			//如果缓存里面图片已经释放，则去掉软链接
-			if(bm==null){
+			// 如果缓存里面图片已经释放，则去掉软链接
+			if (bm == null) {
 				caches.remove(pic_url);
-			}else{
+			} else {
 				ivPic.setImageBitmap(bm);
 				return;
 			}
-		
-		}else{
-			new AsyncTask<String, Void, Bitmap>(){
+
+		} else {
+			new AsyncTask<String, Void, Bitmap>() {
 
 				@Override
 				protected Bitmap doInBackground(String... pic_url) {
@@ -87,18 +88,20 @@ public class HttpUtil {
 					}
 					return bitmap;
 				}
+
 				@Override
 				protected void onPostExecute(Bitmap result) {
-						// System.out.println(pic_url+"  "+ivPic.getTag());
-						if (ivPic.getTag().equals(pic_url)) {
-							
-							//添加图片到缓存
-							caches.put(pic_url, new SoftReference<Bitmap>(result));
-							ivPic.setImageBitmap(result);
-					super.onPostExecute(result);
+					// System.out.println(pic_url+"  "+ivPic.getTag());
+					if (ivPic.getTag().equals(pic_url)) {
+
+						// 添加图片到缓存
+						caches.put(pic_url, new SoftReference<Bitmap>(result));
+						ivPic.setImageBitmap(result);
+						super.onPostExecute(result);
+					}
+
 				}
-				
-				}
-			 }.execute(pic_url);
+			}.execute(pic_url);
 		}
-}}
+	}
+}
