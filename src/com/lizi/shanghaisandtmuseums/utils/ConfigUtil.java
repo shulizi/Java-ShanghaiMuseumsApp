@@ -2,6 +2,7 @@ package com.lizi.shanghaisandtmuseums.utils;
 
 public class ConfigUtil {
 	public static final String GET_NEWS_URL = "http://121.42.159.177/news_connect/getJSON.php";
+	public static String JSON_RESULT;
 	public static String FOUNDATION_MUSEUM = "基础场馆";
 	public static String COMPREHENSIVE_MUSEUM = "综合场馆";
 	public static String THEME_MUSEUM = "主题场馆";

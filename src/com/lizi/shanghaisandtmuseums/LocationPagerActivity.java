@@ -8,19 +8,28 @@ import android.annotation.SuppressLint;
 import android.app.ActionBar;
 import android.app.Activity;
 import android.content.Intent;
+import android.graphics.Color;
 import android.graphics.Point;
 import android.graphics.drawable.Drawable;
 import android.os.Bundle;
 import android.support.v4.view.ViewPager;
+import android.text.Editable;
+import android.text.TextWatcher;
 import android.util.Log;
+import android.view.KeyEvent;
 import android.view.LayoutInflater;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
+import android.view.View.OnClickListener;
 import android.view.ViewGroup;
+import android.widget.EditText;
+import android.widget.ImageView;
 import android.widget.ListAdapter;
 import android.widget.ListView;
 import android.widget.RadioButton;
+import android.widget.TextView;
+import android.widget.TextView.OnEditorActionListener;
 
 import com.baidu.location.BDLocation;
 import com.baidu.location.BDLocationListener;
@@ -33,6 +42,8 @@ import com.baidu.mapapi.map.MapStatusUpdate;
 import com.baidu.mapapi.map.MapStatusUpdateFactory;
 import com.baidu.mapapi.map.MapView;
 import com.baidu.mapapi.map.MyLocationData;
+import com.baidu.mapapi.map.OverlayOptions;
+import com.baidu.mapapi.map.TextOptions;
 import com.baidu.mapapi.model.LatLng;
 import com.baidu.mapapi.overlayutil.PoiOverlay;
 import com.baidu.mapapi.search.core.SearchResult;
@@ -54,6 +65,9 @@ public class LocationPagerActivity extends Activity {
 	private ViewPager mPager;
 	private BaiduMap mBaiduMap;
 	private LatLng latLng;
+	private EditText editSearch;
+	private ImageView imageSearch;
+	private ImageView imageClear;
 	public LocationClient mLocationClient = null;
 	public BDLocationListener myListener = new MyLocationListener();
 
@@ -81,6 +95,7 @@ public class LocationPagerActivity extends Activity {
 		drawables[1].setBounds(0, 0, 70, 70);
 		radio1.setCompoundDrawables(drawables[0], drawables[1], drawables[2],
 				drawables[3]);
+		
 
 		LayoutInflater lInflater = getLayoutInflater();
 		ViewGroup locationLayout = (ViewGroup) lInflater.inflate(
@@ -96,9 +111,7 @@ public class LocationPagerActivity extends Activity {
 		mBaiduMap = mMapView.getMap();
 		mBaiduMap.setMyLocationEnabled(true);
 
-		mLocationClient.start();
-		
-		
+
 		ListView locationList = (ListView) locationLayout
 				.findViewById(R.id.lv_location);
 		ArrayList<HashMap<String, Object>> newsList = new ArrayList<HashMap<String, Object>>();
@@ -119,7 +132,56 @@ public class LocationPagerActivity extends Activity {
 		mPager.setAdapter(new MViewPagerAdapter(pagerListViews));
 		mPager.setOnTouchListener(null);
 		mPager.setCurrentItem(0);
+		
+		editSearch = (EditText) mapLayout.findViewById(R.id.editSearch);
+		imageSearch = (ImageView) mapLayout.findViewById(R.id.imageSearch);
+		imageClear = (ImageView) mapLayout.findViewById(R.id.imageClear);
+		imageClear.getDrawable().setAlpha(100);
+		
+		imageClear.setOnClickListener(new OnClickListener() {
 
+			@Override
+			public void onClick(View arg0) {
+				editSearch.setText("");
+			}
+		});
+		editSearch.setOnEditorActionListener(new OnEditorActionListener() {
+
+			@Override
+			public boolean onEditorAction(TextView text, int arg1,
+					KeyEvent event) {
+				if (event == null) {
+					searchPoi(text.getText().toString());
+					imageSearch.getDrawable().setAlpha(100);
+				}
+
+				return false;
+			}
+		});
+		editSearch.addTextChangedListener(new TextWatcher() {
+
+			@Override
+			public void onTextChanged(CharSequence arg0, int arg1, int arg2,
+					int arg3) {
+				if (editSearch.getText().toString().equals("")) {
+					imageClear.getDrawable().setAlpha(100);
+				} else {
+					imageClear.getDrawable().setAlpha(255);
+				}
+			}
+
+			@Override
+			public void beforeTextChanged(CharSequence arg0, int arg1,
+					int arg2, int arg3) {
+
+			}
+
+			@Override
+			public void afterTextChanged(Editable arg0) {
+				imageSearch.getDrawable().setAlpha(255);
+				searchPoi(editSearch.getText().toString());
+			}
+		});
 	}
 
 	public void locationRadioClick(View v) {
@@ -129,7 +191,7 @@ public class LocationPagerActivity extends Activity {
 
 	public void mapRadioClick(View v) {
 		mPager.setCurrentItem(1);
-
+		mLocationClient.start();
 	}
 
 	@Override
@@ -181,12 +243,14 @@ public class LocationPagerActivity extends Activity {
 		}
 		return super.onOptionsItemSelected(item);
 	}
-	private void searchPoi(){
+
+	private void searchPoi(String skeyword) {
 		PoiSearch mPoiSearch = PoiSearch.newInstance();
 		mPoiSearch.setOnGetPoiSearchResultListener(poiListener);
 		mPoiSearch.searchInCity((new PoiCitySearchOption()).city("上海")
-				.keyword("餐馆").pageNum(50));
+				.keyword(skeyword).pageCapacity(50));
 	}
+
 	public class MyLocationListener implements BDLocationListener {
 
 		@Override
@@ -258,12 +322,11 @@ public class LocationPagerActivity extends Activity {
 			// 设置定位数据
 			mBaiduMap.setMyLocationData(locData);
 
-			latLng = new LatLng(location.getLatitude(),
-					location.getLongitude());
+			latLng = new LatLng(location.getLatitude(), location.getLongitude());
 			MapStatusUpdate mapStatusUpdate = MapStatusUpdateFactory
 					.newLatLng(latLng);
 			mBaiduMap.animateMapStatus(mapStatusUpdate);
-			searchPoi();
+			
 		}
 	}
 
@@ -272,23 +335,42 @@ public class LocationPagerActivity extends Activity {
 			// 获取POI检索结果
 			if (result == null
 					|| result.error == SearchResult.ERRORNO.RESULT_NOT_FOUND) {
-				
+
 				return;
-			}
-			else if (result.error == SearchResult.ERRORNO.NO_ERROR) {
+			} else if (result.error == SearchResult.ERRORNO.NO_ERROR) {
 				mBaiduMap.clear();
 				// 创建PoiOverlay
-				PoiOverlay overlay = new MyPoiOverlay(mBaiduMap);
+				PoiOverlay overlay = new PoiOverlay(mBaiduMap, LocationPagerActivity.this);
 				// 设置overlay可以处理标注点击事件
 				mBaiduMap.setOnMarkerClickListener(overlay);
 				// 设置PoiOverlay数据
 				overlay.setData(result);
 				// 添加PoiOverlay到地图中
 				overlay.addToMap();
-				overlay.zoomToSpan();
+				// overlay.zoomToSpan();
+//				double lastLatitude=0;
+//				double lastLongitude=0;
+				for (int i = 0; i < result.getAllPoi().size(); i++) {
+					double currentLatitude=result.getAllPoi().get(i).location.latitude;
+					double currentLongitude=result.getAllPoi().get(i).location.longitude;
+					
+//					if (Math.abs(lastLatitude-currentLatitude)<0.02 && Math.abs(lastLongitude-currentLongitude)<0.02)
+//						continue;
+//					lastLatitude=currentLatitude;
+//					lastLongitude=currentLongitude;
+					LatLng llText = new LatLng(currentLatitude,currentLongitude);
+					// 构建文字Option对象，用于在地图上添加文字
+					OverlayOptions textOption = new TextOptions().fontSize(24)
+							.fontColor(Color.BLACK)
+							.text(result.getAllPoi().get(i).name)
+							.position(llText);
+					// 在地图上添加该文字对象并显示
+					mBaiduMap.addOverlay(textOption);
+				}
+
 				return;
 			}
-				
+
 		}
 
 		public void onGetPoiDetailResult(PoiDetailResult result) {
@@ -301,15 +383,6 @@ public class LocationPagerActivity extends Activity {
 
 		}
 	};
-	private class MyPoiOverlay extends PoiOverlay {  
-	    public MyPoiOverlay(BaiduMap baiduMap) {  
-	        super(baiduMap);  
-	    }  
-	    @Override  
-	    public boolean onPoiClick(int index) {  
-	        super.onPoiClick(index);  
-	        return true;  
-	    }  
-	}
+
 
 }
