@@ -8,6 +8,8 @@ import android.app.ActionBar;
 import android.app.Activity;
 import android.content.Intent;
 import android.os.Bundle;
+import android.os.Handler;
+import android.os.Message;
 import android.support.v4.view.ViewPager;
 import android.support.v4.view.ViewPager.OnPageChangeListener;
 import android.view.LayoutInflater;
@@ -20,6 +22,7 @@ import android.widget.TextView;
 
 import com.lizi.shanghaisandtmuseums.adapter.MViewPagerAdapter;
 import com.lizi.shanghaisandtmuseums.utils.ConfigUtil;
+import com.lizi.shanghaisandtmuseums.utils.HttpUtil;
 
 @SuppressLint("NewApi")
 public class CategoryPagerActivity extends Activity {
@@ -73,6 +76,16 @@ public class CategoryPagerActivity extends Activity {
 					mPager.setCurrentItem(mPager.getCurrentItem() + 1);
 			}
 		});
+		
+		HttpUtil.getNewsJSON(ConfigUtil.GET_NEWS_URL, new Handler(
+				new Handler.Callback() {
+
+					@Override
+					public boolean handleMessage(Message msg) {
+						ConfigUtil.JSON_RESULT = (String) msg.obj;
+						return false;
+					}
+				}));
 
 	}
 

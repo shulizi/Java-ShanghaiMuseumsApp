@@ -10,7 +10,9 @@ import android.app.Activity;
 import android.content.Intent;
 import android.graphics.Color;
 import android.graphics.Point;
+import android.graphics.PointF;
 import android.graphics.drawable.Drawable;
+import android.os.AsyncTask;
 import android.os.Bundle;
 import android.support.v4.view.ViewPager;
 import android.text.Editable;
@@ -20,9 +22,13 @@ import android.view.KeyEvent;
 import android.view.LayoutInflater;
 import android.view.Menu;
 import android.view.MenuItem;
+import android.view.MotionEvent;
 import android.view.View;
 import android.view.View.OnClickListener;
+import android.view.View.OnTouchListener;
 import android.view.ViewGroup;
+import android.widget.AdapterView;
+import android.widget.AdapterView.OnItemClickListener;
 import android.widget.EditText;
 import android.widget.ImageView;
 import android.widget.ListAdapter;
@@ -37,6 +43,7 @@ import com.baidu.location.LocationClient;
 import com.baidu.location.Poi;
 import com.baidu.mapapi.SDKInitializer;
 import com.baidu.mapapi.map.BaiduMap;
+import com.baidu.mapapi.map.BaiduMap.OnMapTouchListener;
 import com.baidu.mapapi.map.LogoPosition;
 import com.baidu.mapapi.map.MapStatusUpdate;
 import com.baidu.mapapi.map.MapStatusUpdateFactory;
@@ -51,6 +58,7 @@ import com.baidu.mapapi.search.poi.OnGetPoiSearchResultListener;
 import com.baidu.mapapi.search.poi.PoiCitySearchOption;
 import com.baidu.mapapi.search.poi.PoiDetailResult;
 import com.baidu.mapapi.search.poi.PoiIndoorResult;
+import com.baidu.mapapi.search.poi.PoiNearbySearchOption;
 import com.baidu.mapapi.search.poi.PoiResult;
 import com.baidu.mapapi.search.poi.PoiSearch;
 import com.lizi.shanghaisandtmuseums.adapter.MLocationListAdapter;
@@ -68,12 +76,19 @@ public class LocationPagerActivity extends Activity {
 	private EditText editSearch;
 	private ImageView imageSearch;
 	private ImageView imageClear;
+	private ImageView imageNextPage;
+	private int district_num = -1;
+
 	public LocationClient mLocationClient = null;
 	public BDLocationListener myListener = new MyLocationListener();
+
+	private int mapZoomLevel;
+	protected int currentPageNum = 0;
 
 	@Override
 	protected void onCreate(Bundle savedInstanceState) {
 		super.onCreate(savedInstanceState);
+
 		SDKInitializer.initialize(getApplicationContext());
 		setContentView(R.layout.activity_pager_location);
 		mLocationClient = new LocationClient(getApplicationContext()); // 声明LocationClient类
@@ -95,7 +110,6 @@ public class LocationPagerActivity extends Activity {
 		drawables[1].setBounds(0, 0, 70, 70);
 		radio1.setCompoundDrawables(drawables[0], drawables[1], drawables[2],
 				drawables[3]);
-		
 
 		LayoutInflater lInflater = getLayoutInflater();
 		ViewGroup locationLayout = (ViewGroup) lInflater.inflate(
@@ -110,7 +124,26 @@ public class LocationPagerActivity extends Activity {
 
 		mBaiduMap = mMapView.getMap();
 		mBaiduMap.setMyLocationEnabled(true);
+		mapZoomLevel = mMapView.getMapLevel();
+		mBaiduMap.setOnMapTouchListener(new OnMapTouchListener() {
 
+			@Override
+			public void onTouch(MotionEvent event) {
+				switch (event.getAction()) {
+				case MotionEvent.ACTION_UP:
+					// Log.d("test",lastMapLevel+" "+mMapView.getMapLevel());
+					if (mapZoomLevel != mMapView.getMapLevel()) {
+						searchPoi(editSearch.getText().toString(),
+								currentPageNum);
+						mapZoomLevel = mMapView.getMapLevel();
+					}
+					break;
+				default:
+					break;
+				}
+
+			}
+		});
 
 		ListView locationList = (ListView) locationLayout
 				.findViewById(R.id.lv_location);
@@ -124,7 +157,16 @@ public class LocationPagerActivity extends Activity {
 		}
 		ListAdapter listAdapter = new MLocationListAdapter(this, newsList);
 		locationList.setAdapter(listAdapter);
+		locationList.setOnItemClickListener(new OnItemClickListener() {
 
+			@Override
+			public void onItemClick(AdapterView<?> arg0, View arg1, int index,
+					long arg3) {
+				district_num = index;
+				mPager.setCurrentItem(1);
+				searchPoi(editSearch.getText().toString(), currentPageNum);
+			}
+		});
 		List<View> pagerListViews = new ArrayList<View>();
 		pagerListViews.add(locationLayout);
 		pagerListViews.add(mapLayout);
@@ -132,12 +174,12 @@ public class LocationPagerActivity extends Activity {
 		mPager.setAdapter(new MViewPagerAdapter(pagerListViews));
 		mPager.setOnTouchListener(null);
 		mPager.setCurrentItem(0);
-		
+
 		editSearch = (EditText) mapLayout.findViewById(R.id.editSearch);
 		imageSearch = (ImageView) mapLayout.findViewById(R.id.imageSearch);
 		imageClear = (ImageView) mapLayout.findViewById(R.id.imageClear);
 		imageClear.getDrawable().setAlpha(100);
-		
+
 		imageClear.setOnClickListener(new OnClickListener() {
 
 			@Override
@@ -180,6 +222,30 @@ public class LocationPagerActivity extends Activity {
 			public void afterTextChanged(Editable arg0) {
 				imageSearch.getDrawable().setAlpha(255);
 				searchPoi(editSearch.getText().toString());
+			}
+		});
+		editSearch.setText(ConfigUtil.MUSEUM);
+		imageNextPage = (ImageView) mapLayout.findViewById(R.id.imageNextPage);
+		imageNextPage.setOnClickListener(new OnClickListener() {
+			@Override
+			public void onClick(View arg0) {
+				searchPoi(editSearch.getText().toString(), ++currentPageNum);
+			}
+		});
+		imageNextPage.setOnTouchListener(new OnTouchListener() {
+			@Override
+			public boolean onTouch(View arg0, MotionEvent event) {
+				switch (event.getAction()) {
+				case MotionEvent.ACTION_DOWN:
+					imageNextPage.getDrawable().setAlpha(100);
+					break;
+				case MotionEvent.ACTION_UP:
+					imageNextPage.getDrawable().setAlpha(255);
+					break;
+				default:
+					break;
+				}
+				return false;
 			}
 		});
 	}
@@ -245,10 +311,43 @@ public class LocationPagerActivity extends Activity {
 	}
 
 	private void searchPoi(String skeyword) {
+		currentPageNum = 0;
+		searchPoi(skeyword, 0);
+	}
+
+	private void searchPoi(String skeyword, int pageNumber) {
+		if (district_num == -1) {
+			PoiSearch mPoiSearch = PoiSearch.newInstance();
+			mPoiSearch.setOnGetPoiSearchResultListener(poiListener);
+			mPoiSearch.searchInCity((new PoiCitySearchOption())
+					.city(ConfigUtil.SHANGHAI).keyword(skeyword)
+					.pageCapacity(50).pageNum(pageNumber));
+		} else {
+			searchPoi(skeyword, pageNumber, new LatLng(
+					ConfigUtil.DISTRICTS_LOCATION[district_num][1],
+					ConfigUtil.DISTRICTS_LOCATION[district_num][0]),
+					(int) ConfigUtil.DISTRICTS_LOCATION[district_num][2]);
+		}
+	}
+
+	private void searchPoi(String skeyword, int pageNumber, LatLng location,
+			int radius) {
 		PoiSearch mPoiSearch = PoiSearch.newInstance();
 		mPoiSearch.setOnGetPoiSearchResultListener(poiListener);
-		mPoiSearch.searchInCity((new PoiCitySearchOption()).city("上海")
-				.keyword(skeyword).pageCapacity(50));
+		// PoiBoundSearchOption boundSearchOption = new PoiBoundSearchOption();
+		// LatLngBounds bounds = new LatLngBounds.Builder().include(southwest)
+		// .include(northeast).build();// 得到一个地理范围对象
+		// boundSearchOption.bound(bounds);// 设置poi检索范围
+		// boundSearchOption.keyword(skeyword);// 检索关键字
+		// boundSearchOption.pageNum(currentPageNum);
+		// mPoiSearch.searchInBound(boundSearchOption);// 发起poi范围检索请求
+		PoiNearbySearchOption nearbySearchOption = new PoiNearbySearchOption();
+		nearbySearchOption.location(location);
+		nearbySearchOption.keyword(skeyword);
+		nearbySearchOption.radius(radius);// 检索半径，单位是米
+		nearbySearchOption.pageNum(currentPageNum);
+		mPoiSearch.searchNearby(nearbySearchOption);// 发起附近检索请求
+
 	}
 
 	public class MyLocationListener implements BDLocationListener {
@@ -326,12 +425,13 @@ public class LocationPagerActivity extends Activity {
 			MapStatusUpdate mapStatusUpdate = MapStatusUpdateFactory
 					.newLatLng(latLng);
 			mBaiduMap.animateMapStatus(mapStatusUpdate);
-			
+			searchPoi(ConfigUtil.MUSEUM, currentPageNum, new LatLng(31.237674,
+					121.461252), 2000);
 		}
 	}
 
 	OnGetPoiSearchResultListener poiListener = new OnGetPoiSearchResultListener() {
-		public void onGetPoiResult(PoiResult result) {
+		public void onGetPoiResult(final PoiResult result) {
 			// 获取POI检索结果
 			if (result == null
 					|| result.error == SearchResult.ERRORNO.RESULT_NOT_FOUND) {
@@ -340,7 +440,8 @@ public class LocationPagerActivity extends Activity {
 			} else if (result.error == SearchResult.ERRORNO.NO_ERROR) {
 				mBaiduMap.clear();
 				// 创建PoiOverlay
-				PoiOverlay overlay = new PoiOverlay(mBaiduMap, LocationPagerActivity.this);
+				PoiOverlay overlay = new PoiOverlay(mBaiduMap,
+						LocationPagerActivity.this);
 				// 设置overlay可以处理标注点击事件
 				mBaiduMap.setOnMarkerClickListener(overlay);
 				// 设置PoiOverlay数据
@@ -348,25 +449,67 @@ public class LocationPagerActivity extends Activity {
 				// 添加PoiOverlay到地图中
 				overlay.addToMap();
 				// overlay.zoomToSpan();
-//				double lastLatitude=0;
-//				double lastLongitude=0;
-				for (int i = 0; i < result.getAllPoi().size(); i++) {
-					double currentLatitude=result.getAllPoi().get(i).location.latitude;
-					double currentLongitude=result.getAllPoi().get(i).location.longitude;
-					
-//					if (Math.abs(lastLatitude-currentLatitude)<0.02 && Math.abs(lastLongitude-currentLongitude)<0.02)
-//						continue;
-//					lastLatitude=currentLatitude;
-//					lastLongitude=currentLongitude;
-					LatLng llText = new LatLng(currentLatitude,currentLongitude);
-					// 构建文字Option对象，用于在地图上添加文字
-					OverlayOptions textOption = new TextOptions().fontSize(24)
-							.fontColor(Color.BLACK)
-							.text(result.getAllPoi().get(i).name)
-							.position(llText);
-					// 在地图上添加该文字对象并显示
-					mBaiduMap.addOverlay(textOption);
-				}
+				// Log.d("test",mMapView.getMapLevel()+"");
+				new AsyncTask<Void, Void, Boolean[]>() {
+					@Override
+					protected Boolean[] doInBackground(Void... arg0) {
+						PointF[] pointLocation = new PointF[result.getAllPoi()
+								.size()];
+						int index = 0;
+						Boolean isDrawText[] = new Boolean[result.getAllPoi()
+								.size()];
+						pointLocation[0] = new PointF();
+						index = 0;
+						for (int i = 0; i < result.getAllPoi().size(); i++) {
+
+							float currentLatitude = (float) result.getAllPoi()
+									.get(i).location.latitude;
+							float currentLongitude = (float) result.getAllPoi()
+									.get(i).location.longitude;
+							int j = 0;
+							for (j = 0; j < index; j++) {
+								// Log.d("test",latitudes[j]+"---"+currentLatitude+"-----"+j);
+								if (Math.abs(pointLocation[j].x
+										- currentLatitude) * 5000 < 0.025 * mMapView
+										.getMapLevel()
+										&& Math.abs(pointLocation[j].y
+												- currentLongitude) * 5000 < 0.025 * mMapView
+												.getMapLevel())
+									break;
+							}
+							if (j != index) {
+								isDrawText[i] = false;
+								continue;
+							}
+							isDrawText[i] = true;
+							pointLocation[index].x = currentLatitude;
+							pointLocation[index].y = currentLongitude;
+							index++;
+							pointLocation[index] = new PointF();
+						}
+						return isDrawText;
+					}
+
+					@Override
+					protected void onPostExecute(Boolean[] asynResult) {
+
+						for (int i = 0; i < asynResult.length; i++) {
+							if (asynResult[i] == false)
+								continue;
+							double currentLatitude = result.getAllPoi().get(i).location.latitude;
+							double currentLongitude = result.getAllPoi().get(i).location.longitude;
+							LatLng llText = new LatLng(currentLatitude,
+									currentLongitude);
+							// 构建文字Option对象，用于在地图上添加文字
+							OverlayOptions textOption = new TextOptions()
+									.fontSize(24).fontColor(Color.BLACK)
+									.text(result.getAllPoi().get(i).name)
+									.position(llText);
+							// 在地图上添加该文字对象并显示
+							mBaiduMap.addOverlay(textOption);
+						}
+					};
+				}.execute();
 
 				return;
 			}
@@ -383,6 +526,5 @@ public class LocationPagerActivity extends Activity {
 
 		}
 	};
-
 
 }

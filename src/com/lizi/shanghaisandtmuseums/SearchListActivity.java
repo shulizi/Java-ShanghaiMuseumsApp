@@ -93,6 +93,7 @@ public class SearchListActivity extends Activity implements OnItemClickListener 
 		mListAdapter = new MSearchListAdapter(this, newsList);
 		lvNews.setAdapter(mListAdapter);
 		lvNews.setOnItemClickListener(this);
+		
 
 		HttpUtil.getNewsJSON(ConfigUtil.GET_NEWS_URL, getNewsHandler);
 

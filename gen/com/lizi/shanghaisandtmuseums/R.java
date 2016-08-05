@@ -822,7 +822,7 @@ containing a value of this type.
         public static final int abc_split_action_bar_is_narrow=0x7f090002;
     }
     public static final class color {
-        public static final int abc_search_url_text_holo=0x7f0a000e;
+        public static final int abc_search_url_text_holo=0x7f0a000f;
         public static final int abc_search_url_text_normal=0x7f0a0000;
         public static final int abc_search_url_text_pressed=0x7f0a0002;
         public static final int abc_search_url_text_selected=0x7f0a0001;
@@ -836,6 +836,7 @@ containing a value of this type.
         public static final int sky_blue=0x7f0a000c;
         public static final int trans_deep_grey=0x7f0a0006;
         public static final int trans_grey=0x7f0a0004;
+        public static final int transparent=0x7f0a000e;
         public static final int white=0x7f0a000b;
     }
     public static final class dimen {
@@ -1023,19 +1024,22 @@ containing a value of this type.
         public static final int back=0x7f020057;
         public static final int background=0x7f020058;
         public static final int comprehensive_museum=0x7f020059;
-        public static final int foundation_museum=0x7f02005a;
-        public static final int home=0x7f02005b;
-        public static final int ic_launcher=0x7f02005c;
-        public static final int left=0x7f02005d;
-        public static final int location=0x7f02005e;
-        public static final int location_item=0x7f02005f;
-        public static final int maker_icon=0x7f020060;
-        public static final int notheme_museum=0x7f020061;
-        public static final int radio_btn_style=0x7f020062;
-        public static final int region=0x7f020063;
-        public static final int right=0x7f020064;
-        public static final int search=0x7f020065;
-        public static final int theme_museum=0x7f020066;
+        public static final int dialog_enter=0x7f02005a;
+        public static final int dialog_exit=0x7f02005b;
+        public static final int foundation_museum=0x7f02005c;
+        public static final int home=0x7f02005d;
+        public static final int ic_launcher=0x7f02005e;
+        public static final int left=0x7f02005f;
+        public static final int location=0x7f020060;
+        public static final int location_item=0x7f020061;
+        public static final int maker_icon=0x7f020062;
+        public static final int next_page=0x7f020063;
+        public static final int notheme_museum=0x7f020064;
+        public static final int radio_btn_style=0x7f020065;
+        public static final int region=0x7f020066;
+        public static final int right=0x7f020067;
+        public static final int search=0x7f020068;
+        public static final int theme_museum=0x7f020069;
     }
     public static final class id {
         public static final int action_bar=0x7f08001c;
@@ -1046,16 +1050,16 @@ containing a value of this type.
         public static final int action_bar_subtitle=0x7f080023;
         public static final int action_bar_title=0x7f080022;
         public static final int action_context_bar=0x7f08001d;
-        public static final int action_home=0x7f080053;
-        public static final int action_location=0x7f080052;
+        public static final int action_home=0x7f080057;
+        public static final int action_location=0x7f080056;
         public static final int action_menu_divider=0x7f080016;
         public static final int action_menu_presenter=0x7f080017;
         public static final int action_mode_close_button=0x7f080024;
-        public static final int action_search=0x7f080051;
+        public static final int action_search=0x7f080055;
         public static final int activity_chooser_view_content=0x7f080025;
         public static final int always=0x7f08000b;
         public static final int beginning=0x7f080011;
-        public static final int bmapView=0x7f080050;
+        public static final int bmapView=0x7f080053;
         public static final int checkbox=0x7f08002d;
         public static final int collapseActionView=0x7f08000d;
         public static final int default_activity_button=0x7f080028;
@@ -1073,14 +1077,17 @@ containing a value of this type.
         public static final int ifRoom=0x7f08000a;
         public static final int image=0x7f080027;
         public static final int imageClear=0x7f080049;
+        public static final int imageNextPage=0x7f080054;
         public static final int imageSearch=0x7f080047;
-        public static final int imageView1=0x7f08004e;
+        public static final int imageView1=0x7f080050;
         public static final int image_left=0x7f080041;
         public static final int image_right=0x7f080042;
-        public static final int iv_pic=0x7f08004b;
+        public static final int iv_pic=0x7f08004c;
         public static final int listMode=0x7f080001;
         public static final int list_item=0x7f080029;
-        public static final int lv_location=0x7f08004f;
+        public static final int ll_search=0x7f080052;
+        public static final int lv_location=0x7f080051;
+        public static final int lv_map_dialog=0x7f08004b;
         public static final int lv_news=0x7f08003d;
         public static final int lv_search_result=0x7f08004a;
         public static final int middle=0x7f080012;
@@ -1113,8 +1120,9 @@ containing a value of this type.
         public static final int tabMode=0x7f080002;
         public static final int title=0x7f08002b;
         public static final int top_action_bar=0x7f080020;
-        public static final int tv_desc=0x7f08004c;
-        public static final int tv_time=0x7f08004d;
+        public static final int tv_content=0x7f08004f;
+        public static final int tv_desc=0x7f08004d;
+        public static final int tv_time=0x7f08004e;
         public static final int tv_title=0x7f080040;
         public static final int up=0x7f080021;
         public static final int useLogo=0x7f080003;
@@ -1177,16 +1185,18 @@ containing a value of this type.
         public static final int activity_pager_category=0x7f030019;
         public static final int activity_pager_location=0x7f03001a;
         public static final int activity_search_result=0x7f03001b;
-        public static final int list_item=0x7f03001c;
-        public static final int list_location_item=0x7f03001d;
-        public static final int list_main_item=0x7f03001e;
-        public static final int pager_comprehensive_museum=0x7f03001f;
-        public static final int pager_foundation_museum=0x7f030020;
-        public static final int pager_location=0x7f030021;
-        public static final int pager_map=0x7f030022;
-        public static final int pager_theme_museum=0x7f030023;
-        public static final int searchable=0x7f030024;
-        public static final int support_simple_spinner_dropdown_item=0x7f030025;
+        public static final int dialog_map=0x7f03001c;
+        public static final int list_item=0x7f03001d;
+        public static final int list_location_item=0x7f03001e;
+        public static final int list_main_item=0x7f03001f;
+        public static final int list_map_item=0x7f030020;
+        public static final int pager_comprehensive_museum=0x7f030021;
+        public static final int pager_foundation_museum=0x7f030022;
+        public static final int pager_location=0x7f030023;
+        public static final int pager_map=0x7f030024;
+        public static final int pager_theme_museum=0x7f030025;
+        public static final int searchable=0x7f030026;
+        public static final int support_simple_spinner_dropdown_item=0x7f030027;
     }
     public static final class menu {
         public static final int category_menu=0x7f0e0000;
@@ -1246,6 +1256,7 @@ containing a value of this type.
         public static final int app_label=0x7f070077;
         public static final int app_name=0x7f07006a;
         public static final int comprehensive_museum=0x7f070072;
+        public static final int content=0x7f070082;
         public static final int foundation_museum=0x7f070073;
         public static final int hello_world=0x7f07006b;
         public static final int icon=0x7f070071;
@@ -1256,6 +1267,9 @@ containing a value of this type.
         public static final int location=0x7f070080;
         public static final int login_title=0x7f07007a;
         public static final int map=0x7f070081;
+        public static final int museum=0x7f070083;
+        public static final int nextPage=0x7f070084;
+        public static final int next_page=0x7f070085;
         public static final int nothing=0x7f070075;
         public static final int register=0x7f07007b;
         public static final int search=0x7f07007e;
@@ -1357,7 +1371,7 @@ containing a value of this type.
         public static final int todo=0x7f07007f;
     }
     public static final class style {
-        public static final int ActionBarTitleStyle=0x7f0d0085;
+        public static final int ActionBarTitleStyle=0x7f0d0086;
         /** 
         Base application theme, dependent on API level. This theme is replaced
         by AppBaseTheme from res/values-vXX/styles.xml on newer devices.
@@ -1384,7 +1398,7 @@ containing a value of this type.
  All customizations that are NOT specific to a particular API-level can go here. 
          */
         public static final int AppTheme=0x7f0d0084;
-        public static final int CustomActionBarStyle=0x7f0d0086;
+        public static final int CustomActionBarStyle=0x7f0d0087;
         /**  Mimic text appearance in select_dialog_item.xml 
          */
         public static final int TextAppearance_AppCompat_Base_CompactMenu_Dialog=0x7f0d0063;
@@ -1572,9 +1586,11 @@ containing a value of this type.
         public static final int Widget_AppCompat_ProgressBar=0x7f0d000a;
         public static final int Widget_AppCompat_ProgressBar_Horizontal=0x7f0d0009;
         public static final int Widget_AppCompat_Spinner_DropDown_ActionBar=0x7f0d0022;
+        public static final int dialog=0x7f0d0085;
+        public static final int dialog_animation=0x7f0d0089;
         /** 返回icon
          */
-        public static final int style_titlebar_normal=0x7f0d0087;
+        public static final int style_titlebar_normal=0x7f0d0088;
     }
     public static final class styleable {
         /**  ============================================ 

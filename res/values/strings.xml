@@ -25,5 +25,9 @@
     <string name="todo">TODO</string>
     <string name="location">地区</string>
     <string name="map">地图</string>
+    <string name="content">content</string>
+    <string name="museum">科技馆</string>
+    <string name="nextPage">翻页</string>
+    <string name="next_page">翻页</string>
 
 </resources>
