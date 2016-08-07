@@ -29,5 +29,7 @@
     <string name="museum">科技馆</string>
     <string name="nextPage">翻页</string>
     <string name="next_page">翻页</string>
+    <string name="my_location">我的附近</string>
+    <string name="shanghai">上海市</string>
 
 </resources>

@@ -50,10 +50,18 @@ import com.baidu.mapapi.map.MapStatusUpdateFactory;
 import com.baidu.mapapi.map.MapView;
 import com.baidu.mapapi.map.MyLocationData;
 import com.baidu.mapapi.map.OverlayOptions;
+import com.baidu.mapapi.map.PolygonOptions;
+import com.baidu.mapapi.map.PolylineOptions;
+import com.baidu.mapapi.map.Stroke;
 import com.baidu.mapapi.map.TextOptions;
 import com.baidu.mapapi.model.LatLng;
+import com.baidu.mapapi.model.LatLngBounds;
 import com.baidu.mapapi.overlayutil.PoiOverlay;
 import com.baidu.mapapi.search.core.SearchResult;
+import com.baidu.mapapi.search.district.DistrictResult;
+import com.baidu.mapapi.search.district.DistrictSearch;
+import com.baidu.mapapi.search.district.DistrictSearchOption;
+import com.baidu.mapapi.search.district.OnGetDistricSearchResultListener;
 import com.baidu.mapapi.search.poi.OnGetPoiSearchResultListener;
 import com.baidu.mapapi.search.poi.PoiCitySearchOption;
 import com.baidu.mapapi.search.poi.PoiDetailResult;
@@ -68,22 +76,24 @@ import com.lizi.shanghaisandtmuseums.utils.ConfigUtil;
 @SuppressLint("NewApi")
 public class LocationPagerActivity extends Activity {
 	MapView mMapView = null;
+	private Boolean isFirstSearch;
 	private RadioButton radio0;
 	private RadioButton radio1;
 	private ViewPager mPager;
 	private BaiduMap mBaiduMap;
-	private LatLng latLng;
+	private LatLng currentLocationLatLng;
 	private EditText editSearch;
 	private ImageView imageSearch;
 	private ImageView imageClear;
 	private ImageView imageNextPage;
-	private int district_num = -1;
+	private int currentSelectNum = -1;
 
 	public LocationClient mLocationClient = null;
 	public BDLocationListener myListener = new MyLocationListener();
 
 	private int mapZoomLevel;
 	protected int currentPageNum = 0;
+	private ActionBar actionBar;
 
 	@Override
 	protected void onCreate(Bundle savedInstanceState) {
@@ -93,11 +103,11 @@ public class LocationPagerActivity extends Activity {
 		setContentView(R.layout.activity_pager_location);
 		mLocationClient = new LocationClient(getApplicationContext()); // 声明LocationClient类
 		mLocationClient.registerLocationListener(myListener); // 注册监听函数
-
-		ActionBar actionBar = getActionBar();
+		mLocationClient.start();
+		actionBar = getActionBar();
 		actionBar.setDisplayHomeAsUpEnabled(true);
 		actionBar.setDisplayShowHomeEnabled(false);
-		actionBar.setTitle(ConfigUtil.MUSEUM_INTRODUCTION);
+		actionBar.setTitle(ConfigUtil.DISTRICT);
 
 		radio0 = (RadioButton) findViewById(R.id.radio0);
 		radio1 = (RadioButton) findViewById(R.id.radio1);
@@ -125,6 +135,7 @@ public class LocationPagerActivity extends Activity {
 		mBaiduMap = mMapView.getMap();
 		mBaiduMap.setMyLocationEnabled(true);
 		mapZoomLevel = mMapView.getMapLevel();
+
 		mBaiduMap.setOnMapTouchListener(new OnMapTouchListener() {
 
 			@Override
@@ -136,6 +147,7 @@ public class LocationPagerActivity extends Activity {
 						searchPoi(editSearch.getText().toString(),
 								currentPageNum);
 						mapZoomLevel = mMapView.getMapLevel();
+
 					}
 					break;
 				default:
@@ -160,11 +172,13 @@ public class LocationPagerActivity extends Activity {
 		locationList.setOnItemClickListener(new OnItemClickListener() {
 
 			@Override
-			public void onItemClick(AdapterView<?> arg0, View arg1, int index,
+			public void onItemClick(AdapterView<?> arg0, View view, int index,
 					long arg3) {
-				district_num = index;
+				actionBar.setTitle(ConfigUtil.SHANGHAI_DISTRICTS[index]);
+				currentSelectNum = index;
 				mPager.setCurrentItem(1);
 				searchPoi(editSearch.getText().toString(), currentPageNum);
+				isFirstSearch = true;
 			}
 		});
 		List<View> pagerListViews = new ArrayList<View>();
@@ -193,7 +207,8 @@ public class LocationPagerActivity extends Activity {
 			public boolean onEditorAction(TextView text, int arg1,
 					KeyEvent event) {
 				if (event == null) {
-					searchPoi(text.getText().toString());
+					currentPageNum=0;
+					searchPoi(text.getText().toString(), currentPageNum);
 					imageSearch.getDrawable().setAlpha(100);
 				}
 
@@ -221,7 +236,8 @@ public class LocationPagerActivity extends Activity {
 			@Override
 			public void afterTextChanged(Editable arg0) {
 				imageSearch.getDrawable().setAlpha(255);
-				searchPoi(editSearch.getText().toString());
+				currentPageNum=0;
+				searchPoi(editSearch.getText().toString(), currentPageNum);
 			}
 		});
 		editSearch.setText(ConfigUtil.MUSEUM);
@@ -250,6 +266,24 @@ public class LocationPagerActivity extends Activity {
 		});
 	}
 
+	public void myLocationClick(View v) {
+		actionBar.setTitle(getResources().getString(R.string.my_location));
+		currentSelectNum = -1;
+		currentPageNum = 0;
+		mPager.setCurrentItem(1);
+		searchPoi(editSearch.getText().toString(), currentPageNum);
+		isFirstSearch = true;
+	}
+
+	public void cityClick(View v) {
+		actionBar.setTitle(getResources().getString(R.string.shanghai));
+		currentSelectNum = -2;
+		currentPageNum = 0;
+		mPager.setCurrentItem(1);
+		searchPoi(editSearch.getText().toString(), currentPageNum);
+		isFirstSearch = true;
+	}
+
 	public void locationRadioClick(View v) {
 		mPager.setCurrentItem(0);
 
@@ -257,7 +291,7 @@ public class LocationPagerActivity extends Activity {
 
 	public void mapRadioClick(View v) {
 		mPager.setCurrentItem(1);
-		mLocationClient.start();
+
 	}
 
 	@Override
@@ -310,45 +344,108 @@ public class LocationPagerActivity extends Activity {
 		return super.onOptionsItemSelected(item);
 	}
 
-	private void searchPoi(String skeyword) {
-		currentPageNum = 0;
-		searchPoi(skeyword, 0);
-	}
-
 	private void searchPoi(String skeyword, int pageNumber) {
-		if (district_num == -1) {
+		switch (currentSelectNum) {
+		case -2:
 			PoiSearch mPoiSearch = PoiSearch.newInstance();
 			mPoiSearch.setOnGetPoiSearchResultListener(poiListener);
 			mPoiSearch.searchInCity((new PoiCitySearchOption())
 					.city(ConfigUtil.SHANGHAI).keyword(skeyword)
 					.pageCapacity(50).pageNum(pageNumber));
-		} else {
-			searchPoi(skeyword, pageNumber, new LatLng(
-					ConfigUtil.DISTRICTS_LOCATION[district_num][1],
-					ConfigUtil.DISTRICTS_LOCATION[district_num][0]),
-					(int) ConfigUtil.DISTRICTS_LOCATION[district_num][2]);
+			break;
+		case -1:
+			if (currentLocationLatLng != null)
+				searchPoi(skeyword, pageNumber, currentLocationLatLng, 5000);
+			break;
+		default:
+			searchDistrict();
+			break;
 		}
 	}
+
+	// private void searchPoi(String skeyword, int pageNumber, LatLngBounds
+	// builder) {
+	// PoiSearch mPoiSearch = PoiSearch.newInstance();
+	// mPoiSearch.setOnGetPoiSearchResultListener(poiListener);
+	// PoiBoundSearchOption boundSearchOption = new PoiBoundSearchOption();
+	// LatLngBounds bounds = builder;// 得到一个地理范围对象
+	// boundSearchOption.bound(bounds);// 设置poi检索范围
+	// boundSearchOption.keyword(skeyword);// 检索关键字
+	// boundSearchOption.pageNum(currentPageNum);
+	// mPoiSearch.searchInBound(boundSearchOption);// 发起poi范围检索请求
+	// }
 
 	private void searchPoi(String skeyword, int pageNumber, LatLng location,
 			int radius) {
 		PoiSearch mPoiSearch = PoiSearch.newInstance();
 		mPoiSearch.setOnGetPoiSearchResultListener(poiListener);
-		// PoiBoundSearchOption boundSearchOption = new PoiBoundSearchOption();
-		// LatLngBounds bounds = new LatLngBounds.Builder().include(southwest)
-		// .include(northeast).build();// 得到一个地理范围对象
-		// boundSearchOption.bound(bounds);// 设置poi检索范围
-		// boundSearchOption.keyword(skeyword);// 检索关键字
-		// boundSearchOption.pageNum(currentPageNum);
-		// mPoiSearch.searchInBound(boundSearchOption);// 发起poi范围检索请求
 		PoiNearbySearchOption nearbySearchOption = new PoiNearbySearchOption();
 		nearbySearchOption.location(location);
 		nearbySearchOption.keyword(skeyword);
 		nearbySearchOption.radius(radius);// 检索半径，单位是米
-		nearbySearchOption.pageNum(currentPageNum);
+		if (currentPageNum >= 0)
+			nearbySearchOption.pageNum(currentPageNum);
 		mPoiSearch.searchNearby(nearbySearchOption);// 发起附近检索请求
 
 	}
+
+	private void searchDistrict() {
+		if (currentSelectNum < 0)
+			return;
+		DistrictSearch mDistrictSearch;
+		mDistrictSearch = DistrictSearch.newInstance();
+		mDistrictSearch
+				.setOnDistrictSearchListener(districSearchResultListener);
+		mDistrictSearch.searchDistrict(new DistrictSearchOption().cityName(
+				ConfigUtil.SHANGHAI).districtName(
+				ConfigUtil.SHANGHAI_DISTRICTS[currentSelectNum]));
+
+	}
+
+	public OnGetDistricSearchResultListener districSearchResultListener = new OnGetDistricSearchResultListener() {
+
+		@Override
+		public void onGetDistrictResult(DistrictResult districtResult) {
+			mBaiduMap.clear();
+			if (districtResult == null) {
+				return;
+			}
+			if (districtResult.error == SearchResult.ERRORNO.NO_ERROR) {
+				List<List<LatLng>> polyLines = districtResult.getPolylines();
+				if (polyLines == null) {
+					return;
+				}
+				LatLngBounds.Builder builder = new LatLngBounds.Builder();
+				for (List<LatLng> polyline : polyLines) {
+					OverlayOptions ooPolyline11 = new PolylineOptions()
+							.width(10).points(polyline).dottedLine(true)
+							.color(Color.BLUE);
+					mBaiduMap.addOverlay(ooPolyline11);
+					OverlayOptions ooPolygon = new PolygonOptions()
+							.points(polyline).stroke(new Stroke(5, 0xAA00FF88))
+							.fillColor(0x22FFFF00);
+					mBaiduMap.addOverlay(ooPolygon);
+					for (LatLng latLng : polyline) {
+						builder.include(latLng);
+					}
+				}
+				if (isFirstSearch) {
+					mBaiduMap.setMapStatus(MapStatusUpdateFactory
+							.newLatLngBounds(builder.build()));
+					isFirstSearch = false;
+				}
+				searchPoi(
+						editSearch.getText().toString(),
+						currentPageNum,
+						new LatLng(
+								ConfigUtil.DISTRICTS_LOCATION[currentSelectNum][1],
+								ConfigUtil.DISTRICTS_LOCATION[currentSelectNum][0]),
+						(int) ConfigUtil.DISTRICTS_LOCATION[currentSelectNum][2]);
+				// searchPoi(editSearch.getText().toString(), currentPageNum,
+				// builder.build());
+			}
+		}
+	};
 
 	public class MyLocationListener implements BDLocationListener {
 
@@ -421,12 +518,13 @@ public class LocationPagerActivity extends Activity {
 			// 设置定位数据
 			mBaiduMap.setMyLocationData(locData);
 
-			latLng = new LatLng(location.getLatitude(), location.getLongitude());
+			currentLocationLatLng = new LatLng(location.getLatitude(),
+					location.getLongitude());
 			MapStatusUpdate mapStatusUpdate = MapStatusUpdateFactory
-					.newLatLng(latLng);
+					.newLatLng(currentLocationLatLng);
 			mBaiduMap.animateMapStatus(mapStatusUpdate);
-			searchPoi(ConfigUtil.MUSEUM, currentPageNum, new LatLng(31.237674,
-					121.461252), 2000);
+			searchPoi(ConfigUtil.MUSEUM, currentPageNum);
+
 		}
 	}
 
@@ -435,21 +533,11 @@ public class LocationPagerActivity extends Activity {
 			// 获取POI检索结果
 			if (result == null
 					|| result.error == SearchResult.ERRORNO.RESULT_NOT_FOUND) {
-
+				currentPageNum = -1;
 				return;
 			} else if (result.error == SearchResult.ERRORNO.NO_ERROR) {
-				mBaiduMap.clear();
-				// 创建PoiOverlay
-				PoiOverlay overlay = new PoiOverlay(mBaiduMap,
-						LocationPagerActivity.this);
-				// 设置overlay可以处理标注点击事件
-				mBaiduMap.setOnMarkerClickListener(overlay);
-				// 设置PoiOverlay数据
-				overlay.setData(result);
-				// 添加PoiOverlay到地图中
-				overlay.addToMap();
-				// overlay.zoomToSpan();
-				// Log.d("test",mMapView.getMapLevel()+"");
+				// mBaiduMap.clear();
+				
 				new AsyncTask<Void, Void, Boolean[]>() {
 					@Override
 					protected Boolean[] doInBackground(Void... arg0) {
@@ -461,7 +549,7 @@ public class LocationPagerActivity extends Activity {
 						pointLocation[0] = new PointF();
 						index = 0;
 						for (int i = 0; i < result.getAllPoi().size(); i++) {
-
+							pointLocation[index] = new PointF();
 							float currentLatitude = (float) result.getAllPoi()
 									.get(i).location.latitude;
 							float currentLongitude = (float) result.getAllPoi()
@@ -485,14 +573,25 @@ public class LocationPagerActivity extends Activity {
 							pointLocation[index].x = currentLatitude;
 							pointLocation[index].y = currentLongitude;
 							index++;
-							pointLocation[index] = new PointF();
+
 						}
 						return isDrawText;
 					}
 
 					@Override
 					protected void onPostExecute(Boolean[] asynResult) {
-
+						if (currentSelectNum < 0)
+							mBaiduMap.clear();
+						// 创建PoiOverlay
+						PoiOverlay overlay = new PoiOverlay(mBaiduMap,
+								LocationPagerActivity.this);
+						// 设置overlay可以处理标注点击事件
+						mBaiduMap.setOnMarkerClickListener(overlay);
+						// 设置PoiOverlay数据
+						overlay.setData(result);
+						// 添加PoiOverlay到地图中
+						overlay.addToMap();
+						// overlay.zoomToSpan();
 						for (int i = 0; i < asynResult.length; i++) {
 							if (asynResult[i] == false)
 								continue;
@@ -507,6 +606,7 @@ public class LocationPagerActivity extends Activity {
 									.position(llText);
 							// 在地图上添加该文字对象并显示
 							mBaiduMap.addOverlay(textOption);
+
 						}
 					};
 				}.execute();
