@@ -32,6 +32,7 @@ import android.widget.TextView.OnEditorActionListener;
 import com.lizi.shanghaisandtmuseums.adapter.MSearchListAdapter;
 import com.lizi.shanghaisandtmuseums.adapter.MuseumNewsModel;
 import com.lizi.shanghaisandtmuseums.utils.ConfigUtil;
+import com.lizi.shanghaisandtmuseums.utils.FuzzySearchUtil;
 import com.lizi.shanghaisandtmuseums.utils.HttpUtil;
 
 public class SearchListActivity extends Activity implements OnItemClickListener {
@@ -62,7 +63,7 @@ public class SearchListActivity extends Activity implements OnItemClickListener 
 					String pic_url = object.getString("pic_url");
 					
 					String searchText=title+" "+museum+" "+category;
-					if(searchKey==null || (searchKey!=null && searchText.indexOf(searchKey)!=-1)){
+					if(searchKey==null || (searchKey!=null && FuzzySearchUtil.fuzzySearch(searchKey, 0.9, searchText))){
 						newsList.add(new MuseumNewsModel(title, museum, category,
 								time, content_url, pic_url));
 					}

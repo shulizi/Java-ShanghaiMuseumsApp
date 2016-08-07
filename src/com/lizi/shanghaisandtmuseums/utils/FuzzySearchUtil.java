@@ -4,7 +4,7 @@ package com.lizi.shanghaisandtmuseums.utils;
 public class FuzzySearchUtil {
 	public static boolean fuzzySearch(String searchKey, double fuzzyRate,
 			String searchStr) {
-		int count = 0;
+		int count = -1;
 		String[] searchKeys = searchKey.split("");
 
 		for (int i = 0; i < searchKeys.length; i++) {
