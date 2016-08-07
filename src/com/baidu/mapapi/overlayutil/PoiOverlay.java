@@ -13,7 +13,6 @@ import android.app.Dialog;
 import android.content.Context;
 import android.content.Intent;
 import android.os.Bundle;
-import android.util.Log;
 import android.view.Gravity;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -47,7 +46,7 @@ public class PoiOverlay extends OverlayManager {
 
 	private PoiResult mPoiResult = null;
 	private Context context;
-
+	private int selectIndex;
 	private String strJSON;
 
 	/**
@@ -56,9 +55,10 @@ public class PoiOverlay extends OverlayManager {
 	 * @param baiduMap
 	 *            该 PoiOverlay 引用的 BaiduMap 对象
 	 */
-	public PoiOverlay(BaiduMap baiduMap, Context context) {
+	public PoiOverlay(BaiduMap baiduMap, Context context, int selectIndex) {
 		super(baiduMap);
 		this.context = context;
+		this.selectIndex = selectIndex;
 	}
 
 	/**
@@ -78,9 +78,15 @@ public class PoiOverlay extends OverlayManager {
 		}
 		List<OverlayOptions> markerList = new ArrayList<OverlayOptions>();
 		int markerSize = 0;
-		for (int i = mPoiResult.getAllPoi().size()-1; i >=0
+		for (int i = mPoiResult.getAllPoi().size() - 1; i >= 0
 				&& markerSize < MAX_POI_SIZE; i--) {
-			if (mPoiResult.getAllPoi().get(i).location == null) {
+			if (mPoiResult.getAllPoi().get(i).location == null
+					|| (selectIndex >= 0 && Math.abs(mPoiResult.getAllPoi()
+							.get(i).location.latitude
+							- ConfigUtil.DISTRICTS_LOCATION[selectIndex][1]) > ConfigUtil.DISTRICTS_LOCATION[selectIndex][2] / 100000)
+					|| (selectIndex >= 0 && Math.abs(mPoiResult.getAllPoi()
+							.get(i).location.longitude
+							- ConfigUtil.DISTRICTS_LOCATION[selectIndex][0]) > ConfigUtil.DISTRICTS_LOCATION[selectIndex][2] / 100000)) {
 				continue;
 			}
 			markerSize++;
@@ -124,7 +130,7 @@ public class PoiOverlay extends OverlayManager {
 			try {
 				JSONArray jsonArray = new JSONArray(strJSON);
 				contentUrl = new String[jsonArray.length()];
-				int index=0;
+				int index = 0;
 				for (int j = 0; j < jsonArray.length(); j++) {
 					HashMap<String, String> hMap = new HashMap<String, String>();
 					JSONObject object = jsonArray.getJSONObject(j);
@@ -133,8 +139,8 @@ public class PoiOverlay extends OverlayManager {
 					String category = object.getString("category");
 					String content_url = object.getString("content_url");
 					String searchKey = mPoiResult.getAllPoi().get(i).name;
-					
-					if (FuzzySearchUtil.fuzzySearch(searchKey,0.9, museum) ) {
+
+					if (FuzzySearchUtil.fuzzySearch(searchKey, 0.9, museum)) {
 						hMap.put("title", title);
 						hMap.put("museum", museum + " " + category);
 						contentUrl[index] = content_url;
@@ -166,11 +172,16 @@ public class PoiOverlay extends OverlayManager {
 				@Override
 				public void onItemClick(AdapterView<?> list, View IND,
 						int index, long arg3) {
-					Intent intent = new Intent();
-					intent.setClass(context, NewsBrowseActivity.class);
-					Log.d("test",contentUrl2[index]);
-					intent.putExtra("content_url", contentUrl2[index]);
-					context.startActivity(intent);
+					try {
+						Intent intent = new Intent();
+						intent.setClass(context, NewsBrowseActivity.class);
+						intent.putExtra("content_url", contentUrl2[index]);
+						context.startActivity(intent);
+					} catch (Exception e) {
+						e.printStackTrace();
+						System.out.println("Fail to start activity");
+					}
+
 				}
 			});
 

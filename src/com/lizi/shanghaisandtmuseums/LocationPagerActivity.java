@@ -174,6 +174,7 @@ public class LocationPagerActivity extends Activity {
 			@Override
 			public void onItemClick(AdapterView<?> arg0, View view, int index,
 					long arg3) {
+				radio1.setChecked(true);
 				actionBar.setTitle(ConfigUtil.SHANGHAI_DISTRICTS[index]);
 				currentSelectNum = index;
 				mPager.setCurrentItem(1);
@@ -584,7 +585,7 @@ public class LocationPagerActivity extends Activity {
 							mBaiduMap.clear();
 						// 创建PoiOverlay
 						PoiOverlay overlay = new PoiOverlay(mBaiduMap,
-								LocationPagerActivity.this);
+								LocationPagerActivity.this,currentSelectNum);
 						// 设置overlay可以处理标注点击事件
 						mBaiduMap.setOnMarkerClickListener(overlay);
 						// 设置PoiOverlay数据
