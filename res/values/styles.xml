@@ -18,7 +18,6 @@
     </style>
 
     <style name="dialog">  
-	    <item name="android:windowFullscreen">true</item> 
        <item name="android:windowBackground">@android:color/transparent</item>
        <item name="android:windowFullscreen">true</item> 
     </style> 

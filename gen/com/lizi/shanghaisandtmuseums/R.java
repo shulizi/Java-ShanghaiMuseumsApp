@@ -17,6 +17,7 @@ public final class R {
         public static final int abc_slide_out_top=0x7f040005;
     }
     public static final class array {
+        public static final int city=0x7f06001a;
         public static final int smssdk_country_group_a=0x7f060000;
         public static final int smssdk_country_group_b=0x7f060001;
         public static final int smssdk_country_group_c=0x7f060002;
@@ -1035,11 +1036,11 @@ containing a value of this type.
         public static final int location_item=0x7f020062;
         public static final int maker_icon=0x7f020063;
         public static final int next_page=0x7f020064;
-        public static final int notheme_museum=0x7f020065;
-        public static final int radio_btn_style=0x7f020066;
-        public static final int region=0x7f020067;
-        public static final int right=0x7f020068;
-        public static final int search=0x7f020069;
+        public static final int radio_btn_style=0x7f020065;
+        public static final int region=0x7f020066;
+        public static final int right=0x7f020067;
+        public static final int search=0x7f020068;
+        public static final int spinner_style=0x7f020069;
         public static final int theme_museum=0x7f02006a;
     }
     public static final class id {
@@ -1396,14 +1397,15 @@ containing a value of this type.
         AppBaseTheme from BOTH res/values/styles.xml and
         res/values-v11/styles.xml on API 14+ devices.
     
-返回icon
          */
         public static final int AppBaseTheme=0x7f0d0083;
         /**  Application theme. 
  All customizations that are NOT specific to a particular API-level can go here. 
          */
         public static final int AppTheme=0x7f0d0084;
-        public static final int CustomActionBarStyle=0x7f0d0087;
+        public static final int CustomActionBarStyle=0x7f0d0089;
+        public static final int CustomDropDownItemStyle=0x7f0d0087;
+        public static final int CustomDropDownItemTextStyle=0x7f0d0088;
         /**  Mimic text appearance in select_dialog_item.xml 
          */
         public static final int TextAppearance_AppCompat_Base_CompactMenu_Dialog=0x7f0d0063;
@@ -1592,10 +1594,10 @@ containing a value of this type.
         public static final int Widget_AppCompat_ProgressBar_Horizontal=0x7f0d0009;
         public static final int Widget_AppCompat_Spinner_DropDown_ActionBar=0x7f0d0022;
         public static final int dialog=0x7f0d0085;
-        public static final int dialog_animation=0x7f0d0089;
-        /** 返回icon
+        public static final int dialog_animation=0x7f0d008b;
+        /**  返回icon 
          */
-        public static final int style_titlebar_normal=0x7f0d0088;
+        public static final int style_titlebar_normal=0x7f0d008a;
     }
     public static final class styleable {
         /**  ============================================ 

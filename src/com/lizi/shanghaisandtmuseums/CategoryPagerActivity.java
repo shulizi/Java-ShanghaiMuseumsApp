@@ -38,11 +38,17 @@ public class CategoryPagerActivity extends Activity {
 	protected void onCreate(Bundle savedInstanceState) {
 		super.onCreate(savedInstanceState);
 		setContentView(R.layout.activity_pager_category);
+//		SpinnerAdapter mSpinnerAdapter = ArrayAdapter.createFromResource(this,
+//				R.array.city,
+//				android.R.layout.simple_spinner_dropdown_item);
 		ActionBar actionBar = getActionBar();
 		actionBar.setDisplayHomeAsUpEnabled(true);
 		actionBar.setDisplayShowHomeEnabled(false);
 		actionBar.setTitle(ConfigUtil.APP_NAME);
-
+//		actionBar.setNavigationMode(ActionBar.NAVIGATION_MODE_LIST);// 导航模式必须设为NAVIGATION_MODE_LIST
+//		actionBar.setListNavigationCallbacks(mSpinnerAdapter, null);
+		
+		
 		LayoutInflater lInflater = getLayoutInflater();
 		mPager = (ViewPager) findViewById(R.id.vp_main);
 		imageLeft = (ImageView) findViewById(R.id.image_left);
@@ -76,7 +82,7 @@ public class CategoryPagerActivity extends Activity {
 					mPager.setCurrentItem(mPager.getCurrentItem() + 1);
 			}
 		});
-		
+
 		HttpUtil.getNewsJSON(ConfigUtil.GET_NEWS_URL, new Handler(
 				new Handler.Callback() {
 

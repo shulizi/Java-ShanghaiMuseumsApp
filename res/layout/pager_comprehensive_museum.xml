@@ -11,7 +11,7 @@
          android:layout_alignParentLeft="true"
          android:layout_centerVertical="true"
          android:contentDescription="@string/comprehensive_museum"
-         android:src="@drawable/notheme_museum"
+         android:src="@drawable/comprehensive_museum"
          android:onClick="comprehensiveClick"
           />
 

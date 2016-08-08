@@ -1,36 +1,49 @@
-<resources>
+<resources xmlns:android="http://schemas.android.com/apk/res/android">
 
     <!--
         Base application theme for API 14+. This theme completely replaces
         AppBaseTheme from BOTH res/values/styles.xml and
         res/values-v11/styles.xml on API 14+ devices.
     -->
-     <style name="AppBaseTheme" parent="Theme.AppCompat.Light.DarkActionBar">
+    <style name="AppBaseTheme" parent="Theme.AppCompat.Light.DarkActionBar">
         <item name="android:actionBarStyle">@style/CustomActionBarStyle</item>
-        <item name="android:homeAsUpIndicator">@drawable/back</item> <!--返回icon-->  
+        <item name="android:homeAsUpIndicator">@drawable/back</item> <!-- 返回icon -->
+        <item name="android:spinnerDropDownItemStyle">@style/CustomDropDownItemStyle</item>
     </style>
 
     <style name="ActionBarTitleStyle" parent="@android:style/Widget.Holo.Light">
+
         <!-- Change action bar background color -->
         <item name="android:textColor">@color/white</item>
         <item name="android:textSize">20sp</item>
     </style>
 
+    <style name="CustomDropDownItemStyle" parent="@android:style/Widget.Holo.DropDownItem.Spinner">
+        <item name="android:textAppearance">@style/CustomDropDownItemTextStyle</item>
+    </style>
+
+    <style name="CustomDropDownItemTextStyle" parent="@android:style/TextAppearance.DeviceDefault.Large">
+        <item name="android:textColor">@color/white</item>
+    </style>
+
     <style name="CustomActionBarStyle" parent="@android:style/Widget.ActionBar">
+
         <!-- Change action bar background color -->
         <item name="android:background">@color/deep_grey</item>
         <item name="android:titleTextStyle">@style/ActionBarTitleStyle</item>
     </style>
-    <style name="style_titlebar_normal" parent="Theme.AppCompat.Light">  
-        <item name="android:homeAsUpIndicator">@drawable/back</item> <!--返回icon-->  
-    </style> 
-	<style name="dialog" parent="@android:style/Theme.DeviceDefault.Dialog">  
-       <item name="android:windowBackground">@android:color/transparent</item>
-    </style>  
-    <style name="dialog_animation" parent="android:Animation">
-        <item name="@android:windowEnterAnimation">@drawable/dialog_enter</item>  //进入时的动画  
-        <item name="@android:windowExitAnimation">@drawable/dialog_exit</item>    //退出时的动画  
+
+    <style name="style_titlebar_normal" parent="Theme.AppCompat.Light">
+        <item name="android:homeAsUpIndicator">@drawable/back</item> <!-- 返回icon -->
     </style>
-    
+
+    <style name="dialog" parent="@android:style/Theme.DeviceDefault.Dialog">
+        <item name="android:windowBackground">@android:color/transparent</item>
+    </style>
+
+    <style name="dialog_animation" parent="android:Animation">
+        <item name="@android:windowEnterAnimation">@drawable/dialog_enter</item>
+  //进入时的动画                                                   <item name="@android:windowExitAnimation">@drawable/dialog_exit</item>
+    //退出时的动画  </style>
 
 </resources>
