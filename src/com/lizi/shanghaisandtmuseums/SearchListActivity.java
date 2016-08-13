@@ -48,7 +48,7 @@ public class SearchListActivity extends Activity implements OnItemClickListener 
 	private Handler getNewsHandler = new Handler() {
 		public void handleMessage(android.os.Message msg) {
 			strJSON = (String) msg.obj;
-			
+
 			// Log.d("test", strJSON);
 			try {
 				newsList.clear();
@@ -61,18 +61,20 @@ public class SearchListActivity extends Activity implements OnItemClickListener 
 					String time = object.getString("time");
 					String content_url = object.getString("content_url");
 					String pic_url = object.getString("pic_url");
-					
-					String searchText=title+" "+museum+" "+category;
-					if(searchKey==null || (searchKey!=null && FuzzySearchUtil.fuzzySearch(searchKey, 0.9, searchText))){
-						newsList.add(new MuseumNewsModel(title, museum, category,
-								time, content_url, pic_url));
+
+					String searchText = title + " " + museum + " " + category;
+					if (searchKey == null
+							|| (searchKey != null && FuzzySearchUtil
+									.fuzzySearch(searchKey, 0.9, searchText))) {
+						newsList.add(new MuseumNewsModel(title, museum,
+								category, time, content_url, pic_url));
 					}
-					
-					
+
 				}
 				mListAdapter.notifyDataSetChanged();
 			} catch (JSONException e) {
 				e.printStackTrace();
+			} catch (Exception e) {
 			}
 
 		};
@@ -94,7 +96,6 @@ public class SearchListActivity extends Activity implements OnItemClickListener 
 		mListAdapter = new MSearchListAdapter(this, newsList);
 		lvNews.setAdapter(mListAdapter);
 		lvNews.setOnItemClickListener(this);
-		
 
 		HttpUtil.getNewsJSON(ConfigUtil.GET_NEWS_URL, getNewsHandler);
 
@@ -149,10 +150,10 @@ public class SearchListActivity extends Activity implements OnItemClickListener 
 	}
 
 	private void doSearching(String query) {
-//		Toast.makeText(this, query, Toast.LENGTH_SHORT).show();
-		searchKey=query;
-		Message msg=new Message();
-		msg.obj=strJSON;
+		// Toast.makeText(this, query, Toast.LENGTH_SHORT).show();
+		searchKey = query;
+		Message msg = new Message();
+		msg.obj = strJSON;
 		getNewsHandler.sendMessage(msg);
 	}
 

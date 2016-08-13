@@ -9,7 +9,6 @@ import android.app.ActionBar;
 import android.app.Activity;
 import android.content.Intent;
 import android.graphics.Color;
-import android.graphics.Point;
 import android.graphics.PointF;
 import android.graphics.drawable.Drawable;
 import android.os.AsyncTask;
@@ -101,9 +100,8 @@ public class LocationPagerActivity extends Activity {
 
 		SDKInitializer.initialize(getApplicationContext());
 		setContentView(R.layout.activity_pager_location);
-		mLocationClient = new LocationClient(getApplicationContext());
-		mLocationClient.registerLocationListener(myListener);
-		mLocationClient.start();
+		
+		
 		actionBar = getActionBar();
 		actionBar.setDisplayHomeAsUpEnabled(true);
 		actionBar.setDisplayShowHomeEnabled(false);
@@ -167,13 +165,15 @@ public class LocationPagerActivity extends Activity {
 	}
 	
 	private void onMapPagerCreate(){
+		mLocationClient = new LocationClient(getApplicationContext());
+		mLocationClient.registerLocationListener(myListener);
+		mLocationClient.start();
 		LayoutInflater lInflater = getLayoutInflater();
 		ViewGroup mapLayout = (ViewGroup) lInflater.inflate(R.layout.pager_map,
 				null);
 
 		mMapView = (MapView) mapLayout.findViewById(R.id.bmapView);
 		mMapView.setLogoPosition(LogoPosition.logoPostionleftTop);
-		mMapView.setZoomControlsPosition(new Point(100, 100));
 		mMapView.showZoomControls(false);
 
 		mBaiduMap = mMapView.getMap();

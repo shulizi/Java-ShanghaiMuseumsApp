@@ -18,6 +18,7 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.view.Window;
+import android.view.WindowManager;
 import android.widget.AdapterView;
 import android.widget.AdapterView.OnItemClickListener;
 import android.widget.ListView;
@@ -192,7 +193,7 @@ public class PoiOverlay extends OverlayManager {
 			dialog.setCanceledOnTouchOutside(true);
 			dialog.setTitle(mPoiResult.getAllPoi().get(i).name);
 			dialog.show();
-			android.view.WindowManager.LayoutParams layoutParams = window
+			WindowManager.LayoutParams layoutParams = window
 					.getAttributes();
 			layoutParams.width = LayoutParams.MATCH_PARENT;
 			layoutParams.height = LayoutParams.WRAP_CONTENT;

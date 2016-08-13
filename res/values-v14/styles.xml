@@ -43,7 +43,7 @@
 
     <style name="dialog_animation" parent="android:Animation">
         <item name="@android:windowEnterAnimation">@drawable/dialog_enter</item>
-  //进入时的动画                                                   <item name="@android:windowExitAnimation">@drawable/dialog_exit</item>
-    //退出时的动画  </style>
+        <item name="@android:windowExitAnimation">@drawable/dialog_exit</item>
+    </style>
 
 </resources>
